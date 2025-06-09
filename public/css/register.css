@@ -1,0 +1,109 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f4f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* Contenedor del formulario */
+.auth-container {
+    background-color: #ffffff;
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* Título */
+.auth-container h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+    color: #1a202c;
+}
+
+.auth-container p {
+    font-size: 0.95rem;
+    color: #718096;
+    margin-bottom: 1.5rem;
+}
+
+/* Etiquetas e inputs */
+label {
+    display: block;
+    text-align: left;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: #2d3748;
+}
+
+input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    transition: border 0.2s;
+}
+
+input:focus {
+    outline: none;
+    border-color: #4fd1c5;
+}
+
+/* Botón */
+button {
+    width: 100%;
+    padding: 0.6rem;
+    background-color: #0f9d8a;
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #0c8272;
+}
+
+/* Link de registro */
+.auth-container a {
+    color: #6b46c1;
+    text-decoration: none;
+}
+
+.auth-container a:hover {
+    text-decoration: underline;
+}
+
+
+select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    background-color: #fff;
+    appearance: none;
+}
+
+.footer {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #a0aec0;
+    margin-top: 1rem;
+}
