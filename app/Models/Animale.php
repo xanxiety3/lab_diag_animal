@@ -42,6 +42,7 @@ class Animale extends Model
 
 	protected $fillable = [
 		'duenio_id',
+		//'nombre',
 		'especie_id',
 		'raza_id',
 		'sexo_id',

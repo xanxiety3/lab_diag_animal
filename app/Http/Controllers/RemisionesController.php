@@ -12,6 +12,17 @@ use Illuminate\Http\Request;
 
 class RemisionesController extends Controller
 {
+
+    public function show($id){
+           $remision = RemisionMuestraEnvio::with([
+        'persona',
+    
+        'tiposMuestra'
+    ])->findOrFail($id);
+
+    return view('dashboard.show', compact('remision'));
+}
+
     public function showForm()
     {
 
@@ -87,6 +98,6 @@ class RemisionesController extends Controller
 
         $muestraRecibe->tecnicas()->attach($request->tecnicas);
 
-        return redirect()->route('welcome')->with('success', 'Recepción de muestra registrada correctamente.');
+        return redirect()->route('dashboard')->with('success', 'Recepción de muestra registrada correctamente.');
     }
 }

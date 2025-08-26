@@ -40,8 +40,16 @@ class RemisionMuestraRecibe extends Model
 		'muestra_enviada_id',
 		'responsable_id',
 		'fecha',
+		'registro_resultado',
+		'rechazada'
 
 	];
+
+	public function resultados()
+	{
+		return $this->hasMany(Resultado::class, 'remision_muestra_recibe_id');
+	}
+
 
 	public function remision_muestra_envio()
 	{
@@ -52,8 +60,38 @@ class RemisionMuestraRecibe extends Model
 	{
 		return $this->belongsTo(Persona::class, 'responsable_id');
 	}
-	  public function tecnicas()
+	public function tecnicas()
+	{
+		return $this->belongsToMany(TecnicasMuestra::class, 'muestra_recibe_tecnica', 'muestra_recibe_id', 'tecnica_id')->withTimestamps();
+	}
+
+	public function responsable()
+{
+    return $this->belongsTo(User::class, 'responsable_id');
+}
+
+
+
+	// Scope para filtrar por resultado
+    public function scopeResultado($query, $valor)
     {
-       return $this->belongsToMany(TecnicasMuestra::class, 'muestra_recibe_tecnica', 'muestra_recibe_id', 'tecnica_id')->withTimestamps();
+        if ($valor === 'con') {
+            return $query->where('registro_resultado', true);
+        } elseif ($valor === 'sin') {
+            return $query->where('registro_resultado', false);
+        }
+        return $query; // 'todos' o valor no reconocido
+    }
+
+    // Scope para filtrar por estado (rechazada o aceptada)
+    public function scopeEstado($query, $valor)
+    {
+        if ($valor === 'aceptadas') {
+            return $query->where('rechazada', false);
+        } elseif ($valor === 'rechazadas') {
+            return $query->where('rechazada', true);
+        }
+        return $query; // 'todos' o valor no reconocido
     }
 }
+

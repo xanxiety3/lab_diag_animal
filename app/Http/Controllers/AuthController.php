@@ -16,53 +16,41 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-        public function login(Request $request)
-        {
-            $request->validate([
-                'email' => ['required', 'email'],
-                'password' => ['required', 'string'],
-            ]);
+public function login(Request $request)
+{
+    $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required', 'string'],
+    ]);
 
-            // Buscamos el usuario
-            $user = User::where('email', $request->email)->first();
+    $user = User::where('email', $request->email)->first();
 
-            if (!$user) {
-                throw ValidationException::withMessages([
-                    'email' => ['Las credenciales no coinciden con nuestros registros.'],
-                ]);
-            }
+    if (!$user) {
+        throw ValidationException::withMessages([
+            'email' => ['Las credenciales no coinciden con nuestros registros.'],
+        ]);
+    }
 
-            // Comprobamos si la contraseña está hasheada con bcrypt
-            try {
-                if (!Hash::check($request->password, $user->password)) {
-                    throw ValidationException::withMessages([
-                        'email' => ['Las credenciales no coinciden con nuestros registros.'],
-                    ]);
-                }
-            } catch (\RuntimeException $e) {
-                // Capturamos el error de hash inválido (no bcrypt)
-                throw ValidationException::withMessages([
-                    'email' => ['La contraseña no está correctamente configurada en el sistema. Contacte al administrador.'],
-                ]);
-            }
+    // Validar contraseña
+    if (!Hash::check($request->password, $user->password)) {
+        throw ValidationException::withMessages([
+            'email' => ['Las credenciales no coinciden con nuestros registros.'],
+        ]);
+    }
 
-            // Verificamos estado
-            if ($user->estado !== 'activo') {
-                throw ValidationException::withMessages([
-                    'email' => ['El usuario no está activo. Contacte al administrador.'],
-                ]);
-            }
+    // Validar estado
+    if ($user->estado !== 'activo') {
+        throw ValidationException::withMessages([
+            'email' => ['El usuario no está activo. Contacte al administrador.'],
+        ]);
+    }
 
-            // Si todo está ok, autenticamos manualmente
-            Auth::login($user);
+    // Autenticación manual
+    Auth::login($user);
 
-            // Redireccionamos según el rol
-            if ($user->rol_id == 1) {
-                 return redirect()->route('registro.wizard');
-            } else {
-                return view('welcome');
-            }
-        }
+    return redirect()->route('dashboard');
+}
+
 
 
     public function logout(Request $request)
