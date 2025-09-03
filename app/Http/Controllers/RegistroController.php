@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -12,14 +13,30 @@ use App\Models\Departamento;
 use App\Models\Direccion;
 use App\Models\Direccione;
 use App\Models\Municipio;
+use App\Models\RemisionMuestraEnvio;
+use App\Models\RemisionMuestraRecibe;
 use App\Models\TiposDireccion;
 use App\Models\TiposUbicacion;
 
 class RegistroController extends Controller
 {
+    public function index(Request $request)
+    {
+        $remisiones = RemisionMuestraRecibe::with(['persona', 'remision_muestra_envio.tiposMuestra'])
+            ->resultado($request->filtro_resultado)
+            ->estado($request->filtro_estado)
+            ->orderBy('fecha', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('dashboard.index', compact('remisiones'));
+    }
+
+
+
     public function showWizard(Request $request)
     {
-       $step = $request->query('step', 'persona'); // paso por defecto
+        $step = $request->query('step', 'persona'); // paso por defecto
 
         $data = ['step' => $step];
 
@@ -84,6 +101,7 @@ class RegistroController extends Controller
 
         $validated = $request->validate([
             'animales' => 'required|array|min:1',
+           // 'nombre' => 'nullable|string',
             'animales.*.especie_id' => 'required|integer',
             'animales.*.raza_id' => 'required|integer',
             'animales.*.sexo_id' => 'required|integer',
@@ -93,6 +111,7 @@ class RegistroController extends Controller
         foreach ($validated['animales'] as $animalData) {
             Animale::create([
                 'duenio_id' => $personaId,
+               // 'nombre' => $animalData['nombre'],
                 'especie_id' => $animalData['especie_id'],
                 'raza_id' => $animalData['raza_id'],
                 'sexo_id' => $animalData['sexo_id'],
@@ -141,9 +160,8 @@ class RegistroController extends Controller
 
 
     public function municipiosPorDepartamento($departamentoId)
-{
-    $municipios = Municipio::where('departamento_id', $departamentoId)->get(['id', 'nombre']);
-    return response()->json($municipios);
-}
-
+    {
+        $municipios = Municipio::where('departamento_id', $departamentoId)->get(['id', 'nombre']);
+        return response()->json($municipios);
+    }
 }
