@@ -32,11 +32,31 @@ Route::middleware(['auth', IsUserAuth::class])->group(function () {
         Route::post('/remisiones/enviada', [RemisionesController::class, 'store'])->name('remisiones.store');
 
         Route::get('/remisiones/recibida', [RemisionesController::class, 'showFormRecibido'])->name('formulario.recibida');
-        Route::post('/remisiones/recibida', [RemisionesController::class, 'storeRecibido'])->name('remisiones.recibida');  
-             /// Ruta única para mostrar el wizard (con paso controlado por query ?step=)
+        Route::post('/remisiones/recibida', [RemisionesController::class, 'storeRecibido'])->name('remisiones.recibida');
+        /// Ruta única para mostrar el wizard (con paso controlado por query ?step=)
         Route::get('/registro', [RegistroController::class, 'showWizard'])->name('registro.wizard');
         Route::get('/inicio', [RegistroController::class, 'index'])->name('dashboard');
         Route::get('/ver/{id}', [RemisionesController::class, 'show'])->name('show.remision');
+
+
+        // 1️⃣ Guardar animales seleccionados para una técnica
+        Route::post(
+            '/tecnicas/{tecnica}/remisiones/{remisionRecibe}/animales',
+            [ResultadoController::class, 'guardarAnimales']
+        )->name('resultados.guardarAnimales');
+
+        // 2️⃣ Mostrar la vista de registrar resultados para una técnica y remisión
+        Route::get(
+            '/tecnicas/{tecnica}/remisiones/{remisionRecibe}/resultados',
+            [ResultadoController::class, 'resultadosIndex']
+        )->name('tecnicas.resultados.index');
+
+        // 3️⃣ Guardar los resultados ingresados
+        Route::post(
+            '/tecnicas/{tecnica}/remisiones/{remisionRecibe}/resultados',
+            [ResultadoController::class, 'guardarResultados']
+        )->name('resultados.guardar');
+
 
         Route::get('/resultados/{remision}/create', [ResultadoController::class, 'create'])->name('resultados.create');
 

@@ -30,17 +30,20 @@ class TiposMuestra extends Model
 		'nombre'
 	];
 
+	public function remisiones()
+	{
+		return $this->belongsToMany(RemisionMuestraEnvio::class, 'remision_tipo_muestra', 'tipo_muestra_id', 'remision_id')
+			->withPivot('cantidad_muestra', 'refrigeracion', 'observaciones')
+			->withTimestamps();
+	}
+
+
 	public function relacion_items_ensayo_detalles_muestras()
 	{
 		return $this->hasMany(RelacionItemsEnsayoDetallesMuestra::class, 'tipo_muestra_id');
 	}
 
-	   public function remisiones()
-    {
-        return $this->belongsToMany(RemisionMuestraEnvio::class, 'remision_tipo_muestra')
-            ->withPivot('cantidad_muestra', 'refrigeracion', 'observaciones')
-            ->withTimestamps();
-    }
+	
 
 	public function tecnicas_muestras()
 	{

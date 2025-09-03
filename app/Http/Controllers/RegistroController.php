@@ -22,7 +22,7 @@ class RegistroController extends Controller
 {
     public function index(Request $request)
     {
-        $remisiones = RemisionMuestraRecibe::with(['persona', 'remision_muestra_envio.tiposMuestra'])
+        $remisiones = RemisionMuestraRecibe::with(['persona', 'remision_muestra_envio.tiposMuestras'])
             ->resultado($request->filtro_resultado)
             ->estado($request->filtro_estado)
             ->orderBy('fecha', 'desc')

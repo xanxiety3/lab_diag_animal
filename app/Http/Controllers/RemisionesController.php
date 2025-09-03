@@ -9,19 +9,66 @@ use App\Models\RemisionMuestraRecibe;
 use App\Models\TecnicasMuestra;
 use App\Models\TiposMuestra;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RemisionesController extends Controller
 {
-
-    public function show($id){
-           $remision = RemisionMuestraEnvio::with([
-        'persona',
     
-        'tiposMuestra'
-    ])->findOrFail($id);
+    public function show($id)
+    {
+        // 1) cargamos la remisión (envío) con las relaciones de persona y animales
+        $remision = RemisionMuestraEnvio::with([
+            'persona.direcciones',
+            'persona.animales.especie',
+            'persona.animales.raza',
+            //'tiposMuestra', // opcional: si esta relación existe y funciona
+            'remision_muestra_recibe' // coleccion de remision_muestra_recibe
+        ])->findOrFail($id);
 
-    return view('dashboard.show', compact('remision'));
-}
+        // 2) Obtener los ids de remision_muestra_recibe asociados a esta remisión envío
+        $remisionRecibeIds = DB::table('remision_muestra_recibe')
+            ->where('muestra_enviada_id', $remision->id)
+            ->pluck('id')
+            ->toArray();
+
+        // 3) Si no hay remisiones recibidas, no hay técnicas asociadas
+        $tecnicas = collect();
+        if (!empty($remisionRecibeIds)) {
+            /*
+         *  Ajusta el nombre 'tecnicas_muestra' si en tu BD la tabla de técnicas se llama distinto.
+         *  Hacemos join para sacar nombre y opcionalmente contar cuántas veces aparece (útil para mostrar).
+         */
+            $tecnicas = DB::table('muestra_recibe_tecnica')
+                ->whereIn('muestra_recibe_id', $remisionRecibeIds)
+                ->join('tecnicas_muestra', 'muestra_recibe_tecnica.tecnica_id', '=', 'tecnicas_muestra.id')
+                ->select('tecnicas_muestra.id', 'tecnicas_muestra.nombre', DB::raw('COUNT(*) as veces'))
+                ->groupBy('tecnicas_muestra.id', 'tecnicas_muestra.nombre')
+                ->get();
+        }
+
+        // 4) Muestras asociadas (pivot remision_tipo_muestra)
+    $muestras = DB::table('remision_tipo_muestra')
+        ->where('remision_id', $remision->id)
+        ->join('tipos_muestra', 'remision_tipo_muestra.tipo_muestra_id', '=', 'tipos_muestra.id')
+        ->select(
+            'tipos_muestra.id',
+            'tipos_muestra.nombre',
+            'remision_tipo_muestra.cantidad_muestra',
+            'remision_tipo_muestra.refrigeracion',
+            'remision_tipo_muestra.observaciones'
+        )
+        ->get();
+
+    // 5) pasar todo a la vista
+    return view('dashboard.show', [
+        'remision' => $remision,
+        'tecnicas' => $tecnicas, // colección de técnicas
+        'muestras' => $muestras, // colección de muestras
+    ]);
+    }
+
+
+
 
     public function showForm()
     {
@@ -49,7 +96,7 @@ class RemisionesController extends Controller
 
         foreach ($request->tipos_muestra as $tipoId => $datos) {
             if (!empty($datos['activo']) && isset($datos['cantidad'], $datos['refrigeracion'])) {
-                $remision->tiposMuestra()->attach($tipoId, [
+                $remision->tiposMuestras()->attach($tipoId, [
                     'cantidad_muestra' => $datos['cantidad'],
                     'refrigeracion' => $datos['refrigeracion'],
                     'observaciones' => $datos['observaciones'] ?? null,

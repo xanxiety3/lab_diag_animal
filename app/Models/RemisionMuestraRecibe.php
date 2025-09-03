@@ -66,32 +66,35 @@ class RemisionMuestraRecibe extends Model
 	}
 
 	public function responsable()
-{
-    return $this->belongsTo(User::class, 'responsable_id');
-}
-
-
-
+	{
+		return $this->belongsTo(User::class, 'responsable_id');
+	}
 	// Scope para filtrar por resultado
-    public function scopeResultado($query, $valor)
-    {
-        if ($valor === 'con') {
-            return $query->where('registro_resultado', true);
-        } elseif ($valor === 'sin') {
-            return $query->where('registro_resultado', false);
-        }
-        return $query; // 'todos' o valor no reconocido
-    }
+	public function scopeResultado($query, $valor)
+	{
+		if ($valor === 'con') {
+			// Con resultado registrado (1)
+			return $query->where('registro_resultado', 1);
+		} elseif ($valor === 'sin') {
+			// Sin resultado (0 o null)
+			return $query->where(function ($q) {
+				$q->where('registro_resultado', 0)
+					->orWhereNull('registro_resultado');
+			});
+		}
+		return $query; // 'todos'
+	}
 
-    // Scope para filtrar por estado (rechazada o aceptada)
-    public function scopeEstado($query, $valor)
-    {
-        if ($valor === 'aceptadas') {
-            return $query->where('rechazada', false);
-        } elseif ($valor === 'rechazadas') {
-            return $query->where('rechazada', true);
-        }
-        return $query; // 'todos' o valor no reconocido
-    }
+	// Scope para filtrar por estado
+	public function scopeEstado($query, $valor)
+	{
+		if ($valor === 'aceptadas') {
+			// Aceptadas = no rechazadas (0)
+			return $query->where('rechazada', 0);
+		} elseif ($valor === 'rechazadas') {
+			// Rechazadas = 1
+			return $query->where('rechazada', 1);
+		}
+		return $query; // 'todos'
+	}
 }
-

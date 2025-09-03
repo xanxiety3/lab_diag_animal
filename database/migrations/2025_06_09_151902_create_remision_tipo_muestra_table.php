@@ -13,10 +13,17 @@ return new class extends Migration
     {
         Schema::create('remision_tipo_muestra', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('remision_id')->constrained('remision_muestra_envio')->onDelete('cascade');
-            $table->unsignedBigInteger('tipo_muestra_id')->constrained('tipos_muestra')->onDelete('cascade');
+
+            $table->foreignIdFor('remision_id')
+                ->constrained('remision_muestra_envio')
+                ->onDelete('cascade');
+
+            $table->foreignId('tipo_muestra_id')
+                ->constrained('tipos_muestra')
+                ->onDelete('cascade');
+
             $table->integer('cantidad_muestra');
-            $table->boolean('refrigeracion');
+            $table->boolean('refrigeracion')->default(false);
             $table->text('observaciones')->nullable();
             $table->timestamps();
         });
