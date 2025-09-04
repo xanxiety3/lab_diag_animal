@@ -33,6 +33,9 @@ class RemisionMuestraRecibe extends Model
 		'muestra_enviada_id' => 'int',
 		'responsable_id' => 'int',
 		'fecha' => 'datetime',
+		'rechazada' => 'boolean',
+		'registro_resultado' => 'boolean',
+
 
 	];
 
@@ -60,10 +63,18 @@ class RemisionMuestraRecibe extends Model
 	{
 		return $this->belongsTo(Persona::class, 'responsable_id');
 	}
+
 	public function tecnicas()
 	{
-		return $this->belongsToMany(TecnicasMuestra::class, 'muestra_recibe_tecnica', 'muestra_recibe_id', 'tecnica_id')->withTimestamps();
+		return $this->belongsToMany(
+			TecnicasMuestra::class,         // ✅ modelo destino correcto
+			'muestra_recibe_tecnica',      // tabla pivot
+			'muestra_recibe_id',           // FK en pivot hacia este modelo
+			'tecnica_id'                   // FK en pivot hacia tecnicas_muestra
+		);
 	}
+
+
 
 	public function responsable()
 	{

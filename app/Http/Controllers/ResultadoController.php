@@ -11,15 +11,15 @@ use Illuminate\Support\Facades\DB;
 class ResultadoController extends Controller
 {
     public function create($remisionId)
-    {
-        $remision = RemisionMuestraRecibe::with('tecnicas')->findOrFail($remisionId);
+{
+    $remision = RemisionMuestraRecibe::with([
+        'remision_muestra_envio.tiposMuestras',
+        'remision_muestra_envio.remision_muestra_recibe.tecnicas'
+    ])->findOrFail($remisionId);
 
-        if ($remision->rechazada) {
-            return redirect()->back()->with('error', 'No se pueden registrar resultados en una muestra rechazada.');
-        }
+    return view('dashboard.resultados', compact('remision'));
+}
 
-        return view('dashboard.resultados', compact('remision'));
-    }
 
    public function asignarAnimales($remisionRecibeId, $tecnicaId)
 {
@@ -87,4 +87,6 @@ class ResultadoController extends Controller
         return redirect()->route('show.remision ', $remisionRecibeId)
             ->with('success', 'Resultados guardados correctamente.');
     }
+
+    
 }

@@ -30,20 +30,26 @@ class RemisionMuestraEnvio extends Model
 	protected $table = 'remision_muestra_envio';
 	public $timestamps = false;
 	protected $casts = [
-		
+
 		'fecha' => 'datetime',
 
 	];
 
 
-    protected $fillable = ['fecha', 'cliente_id', 'observaciones'];
+	protected $fillable = ['fecha', 'cliente_id', 'observaciones'];
 
-    public function tiposMuestras()
+	public function remision_muestra_recibe()
+	{
+		return $this->hasOne(RemisionMuestraRecibe::class, 'muestra_enviada_id');
+	}
+
+	public function tiposMuestras()
 {
     return $this->belongsToMany(TiposMuestra::class, 'remision_tipo_muestra', 'remision_id', 'tipo_muestra_id')
-        ->withPivot('cantidad_muestra', 'refrigeracion', 'observaciones')
-        ->withTimestamps();
+                ->withPivot('cantidad_muestra', 'refrigeracion', 'observaciones')
+                ->withTimestamps();
 }
+
 
 
 
@@ -62,10 +68,7 @@ class RemisionMuestraEnvio extends Model
 		return $this->hasMany(RelacionItemsEnsayo::class, 'remision_id');
 	}
 
-	public function remision_muestra_recibe()
-	{
-		return $this->hasMany(RemisionMuestraRecibe::class, 'muestra_enviada_id');
-	}
+	
 
 	public function verificacion_criterios()
 	{

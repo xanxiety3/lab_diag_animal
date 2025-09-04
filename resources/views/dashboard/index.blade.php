@@ -25,22 +25,16 @@
                 <form action="{{ route('dashboard') }}" method="GET">
                     <label for="filtro-resultado">Resultado:</label>
                     <select name="filtro_resultado" id="filtro-resultado">
-                        <option value="todos" {{ request('filtro_resultado') == 'todos' ? 'selected' : '' }}>Todos
-                        </option>
-                        <option value="con" {{ request('filtro_resultado') == 'con' ? 'selected' : '' }}>Con
-                            resultado</option>
-                        <option value="sin" {{ request('filtro_resultado') == 'sin' ? 'selected' : '' }}>Sin
-                            resultado</option>
+                        <option value="todos" {{ request('filtro_resultado') == 'todos' ? 'selected' : '' }}>Todos</option>
+                        <option value="con" {{ request('filtro_resultado') == 'con' ? 'selected' : '' }}>Con resultado</option>
+                        <option value="sin" {{ request('filtro_resultado') == 'sin' ? 'selected' : '' }}>Sin resultado</option>
                     </select>
 
                     <label for="filtro-estado">Estado:</label>
                     <select name="filtro_estado" id="filtro-estado">
-                        <option value="todos" {{ request('filtro_estado') == 'todos' ? 'selected' : '' }}>Todos
-                        </option>
-                        <option value="aceptadas" {{ request('filtro_estado') == 'aceptadas' ? 'selected' : '' }}>
-                            Aceptadas</option>
-                        <option value="rechazadas" {{ request('filtro_estado') == 'rechazadas' ? 'selected' : '' }}>
-                            Rechazadas</option>
+                        <option value="todos" {{ request('filtro_estado') == 'todos' ? 'selected' : '' }}>Todos</option>
+                        <option value="aceptadas" {{ request('filtro_estado') == 'aceptadas' ? 'selected' : '' }}>Aceptadas</option>
+                        <option value="rechazadas" {{ request('filtro_estado') == 'rechazadas' ? 'selected' : '' }}>Rechazadas</option>
                     </select>
 
                     <button type="submit">Aplicar</button>
@@ -51,7 +45,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>ID Remisión</th>
                         <th>Fecha</th>
                         <th>Responsable</th>
                         <th>Muestra/Técnica</th>
@@ -62,7 +56,8 @@
                 <tbody>
                     @foreach ($remisiones as $remision)
                         <tr>
-                            <td>{{ $remision->id }}</td>
+                            <!-- Mostramos el id real de la remisión enviada -->
+                            <td>{{ $remision->muestra_enviada_id }}</td>
                             <td>{{ $remision->fecha }}</td>
                             <td>{{ $remision->responsable->name ?? 'Sin responsable' }}</td>
                             <td>
@@ -81,7 +76,8 @@
                             </td>
 
                             <td>
-                                <a href="{{ route('show.remision', $remision->id) }}" class="btn-ver">Ver</a>
+                                <!-- Enlace con muestra_enviada_id -->
+                                <a href="{{ route('show.remision', $remision->muestra_enviada_id) }}" class="btn-ver">Ver</a>
                             </td>
                         </tr>
                     @endforeach

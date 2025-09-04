@@ -49,11 +49,19 @@ class TecnicasMuestra extends Model
 		return $this->hasMany(RelacionItemsEnsayoDetallesMuestra::class);
 	}
 
+
+	public function muestrasRecibidas()
+	{
+		return $this->belongsToMany(MuestraRecibeTecnica::class, 'muestra_recibe_tecnica');
+	}
 	
-    public function muestrasRecibidas()
-    {
-        return $this->belongsToMany(MuestraRecibeTecnica::class, 'muestra_recibe_tecnica');
-    }
-
-
+	public function remisionesRecibidas()
+	{
+		return $this->belongsToMany(
+			RemisionMuestraRecibe::class,
+			'muestra_recibe_tecnica',
+			'tecnica_id',
+			'muestra_recibe_id'
+		);
+	}
 }
