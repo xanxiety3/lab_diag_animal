@@ -117,6 +117,9 @@
             </tbody>
         </table>
 
+
+        
+
     @endif
 
    <h2>🔬 Técnicas asociadas</h2>
@@ -138,10 +141,12 @@
         {{ $remisionRecibe && $remisionRecibe->rechazada ? '❌ Rechazada' : '✔️ Aceptada' }}
     </p>
 
-    {{-- Botón Registrar resultado SOLO si no está rechazada y no tiene resultado --}}
-    @if ($remisionRecibe && !$remisionRecibe->rechazada && !$remisionRecibe->registro_resultado)
-        <a class="btn" href="{{ route('resultados.create', $remisionRecibe->id) }}">➕ Registrar resultados</a>
-    @endif
+   @if ($remisionRecibe && !$remisionRecibe->rechazada && !$remisionRecibe->registro_resultado)
+    <a class="btn" href="{{ route('resultados.elegir_tecnica', $remision->id) }}">
+        ➕ Registrar resultados
+    </a>
+@endif
+
 
 </body>
 </html>
