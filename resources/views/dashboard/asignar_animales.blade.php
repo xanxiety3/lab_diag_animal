@@ -2,42 +2,62 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Asignar animales a técnica</title>
+    <title>Asignar animales - Técnica {{ $tecnica->nombre }}</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f8f9fa; }
-        h2, h3 { color: #333; }
-        .animal-list { margin-top: 20px; padding: 15px; background: white; border: 1px solid #ccc; border-radius: 8px; width: 400px; }
-        .animal-item { margin: 8px 0; }
-        .btn { margin-top: 20px; padding: 10px 15px; border: none; border-radius: 5px; background-color: #007bff; color: white; cursor: pointer; }
-        .btn:hover { background-color: #0056b3; }
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h2 { margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background: #f4f4f4; }
+        .btn { background: #007BFF; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; }
+        .btn:hover { background: #0056b3; }
     </style>
 </head>
 <body>
 
-    <h2>Asignar animales a la técnica: {{ $tecnica->nombre }}</h2>
-    <p>Remisión recibida #{{ $remisionRecibe->id }}</p>
+    <h1>🐾 Asignar animales a la técnica "{{ $tecnica->nombre }}"</h1>
+    <h2>📋 Remisión #{{ $remision->id }}</h2>
 
-    <form method="POST" action="{{ route('tecnicas.resultados.index', [$remisionRecibe->id, $tecnica->id]) }}">
-        @csrf
+    @if ($animales->isNotEmpty())
+        <form method="POST" action="{{ route('resultados.guardar_animales', [
+    'tecnica'        => $tecnica->id,
+    'remisionRecibe' => $remisionRecibe->id
+]) }}">
+            @csrf
 
-        <h3>Animales del dueño: {{ $persona->nombres ?? '' }} {{ $persona->apellidos ?? '' }}</h3>
+            <input type="hidden" name="remision_id" value="{{ $remision->id }}">
+            <input type="hidden" name="tecnica_id" value="{{ $tecnica->id }}">
 
-        <div class="animal-list">
-            @forelse($animales as $animal)
-                <div class="animal-item">
-                    <label>
-                        <input type="checkbox" name="animales[]" value="{{ $animal->id }}">
-                        {{ $animal->nombre ?? 'Sin nombre' }}
-                        ({{ $animal->especie->nombre ?? 'Especie desconocida' }})
-                    </label>
-                </div>
-            @empty
-                <p>No hay animales registrados para este dueño.</p>
-            @endforelse
-        </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Seleccionar</th>
+                        <th>Nombre</th>
+                        <th>Especie</th>
+                        <th>Raza</th>
+                        <th>Edad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($animales as $animal)
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="animales[]" value="{{ $animal->id }}">
+                            </td>
+                            <td>{{ $animal->nombre }}</td>
+                            <td>{{ $animal->especie?->nombre ?? '—' }}</td>
+                            <td>{{ $animal->raza?->nombre ?? '—' }}</td>
+                            <td>{{ $animal->edad }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
 
-        <button type="submit" class="btn">Guardar selección</button>
-    </form>
+            <button type="submit" class="btn">💾 Guardar asignación</button>
+        </form>
+    @else
+        <p>No hay animales asociados al propietario de esta remisión.</p>
+    @endif
 
 </body>
 </html>

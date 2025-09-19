@@ -68,28 +68,39 @@ Route::middleware(['auth', IsUserAuth::class])->group(function () {
 
 
         // -------------------------
+        //registrar animales a una tecnica
+        Route::get(
+            '/resultados/{remision}/{tecnica}/asignar-animales',
+            [ResultadoController::class, 'asignarAnimales']
+        )->name('resultados.asignar_animales');
+
+        //guardar animales asignados a una tecnica
+        Route::post(
+            '/tecnicas/{tecnica}/remisiones/{remisionRecibe}/animales',
+            [ResultadoController::class, 'guardarAnimales']
+        )->name('resultados.guardar_animales');
+
+
+
         Route::get('/remisiones/{remisionRecibe}/elegir-muestra', [ResultadoController::class, 'elegirMuestra'])
             ->name('resultados.elegirMuestra');
 
 
-       Route::get('remisiones/{remisionEnvioId}/tecnicas', [ResultadoController::class, 'elegirTecnica'])
-     ->name('resultados.elegir_tecnica');
+        //vista para registrar resultado por tecnica
+        Route::get('remisiones/{remisionEnvioId}/tecnicas', [ResultadoController::class, 'elegirTecnica'])
+            ->name('resultados.elegir_tecnica');
 
 
-
-        Route::get('/resultados/asignar-animales/{remision}/{tecnica}', [ResultadoController::class, 'asignarAnimales'])->name('resultados.asignar_animales');
-        // Vista para asignar animales a la técnica seleccionada
-
-
-        // Flujo de registro de resultados
-        Route::get('/tecnicas/{tecnica}/remisiones/{remisionRecibe}/resultados', [ResultadoController::class, 'resultadosIndex'])->name('tecnicas.resultados.index');
-        // Mostrar formulario de registrar resultados de una técnica
-
-        Route::post('/tecnicas/{tecnica}/remisiones/{remisionRecibe}/resultados', [ResultadoController::class, 'guardarResultados'])->name('resultados.guardar');
-        // Guardar resultados ingresados
-
-        Route::post('/tecnicas/{tecnica}/remisiones/{remisionRecibe}/animales', [ResultadoController::class, 'guardarAnimales'])->name('resultados.guardarAnimales');
-        // Guardar animales seleccionados para la técnica
-
+        // para la vista de resultados segun tecnica
+        Route::get('resultados/{remisionRecibe}/{tecnica}/create', [
+            ResultadoController::class,
+            'createResultado'
+        ])->name('resultados.create');
     });
+
+    Route::post('resultados/guardar-multiple/{remisionRecibe}/{tecnica}', 
+    [ResultadoController::class, 'storeResultadoMultiple'])
+    ->name('resultados.store_resultado_multiple');
+
+
 });

@@ -73,4 +73,10 @@ class Animale extends Model
 	{
 		return $this->hasMany(RelacionItemsEnsayoDetallesMuestra::class, 'animal_id');
 	}
+
+
+	public function tecnicasAsignadas()
+	{
+		return $this->hasMany(AnimalTecnicaResultado::class, 'animal_id');
+	}
 }
