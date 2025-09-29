@@ -1,121 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
- <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f0f4f8;
-            padding: 30px;
-        }
-
-        form {
-            max-width: 800px;
-            margin: auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-        }
-
-        h4 {
-            font-size: 20px;
-            margin-bottom: 20px;
-            color: #2c3e50;
-        }
-
-        label {
-            font-weight: 600;
-            margin-bottom: 6px;
-            display: block;
-            color: #444;
-        }
-
-        input[type="text"],
-        input[type="date"],
-        input[type="number"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 16px;
-            transition: border 0.3s ease;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            border-color: #3498db;
-            outline: none;
-            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
-        }
-
-        .tipo-muestra {
-            border: 1px solid #dce1e7;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            background-color: #f9fafa;
-        }
-
-        .tipo-muestra label {
-            margin-top: 10px;
-        }
-
-        .tipo-muestra input[type="checkbox"] {
-            margin-right: 8px;
-            transform: scale(1.2);
-        }
-
-        button {
-            background-color: #3498db;
-            color: white;
-            padding: 14px 22px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #2d7fbf;
-        }
+    <title>Recepción de Muestra</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1, h2 { margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background: #f4f4f4; }
+        .btn { background: #28a745; color: white; padding: 8px 12px; border-radius: 4px; border: none; cursor: pointer; }
+        .btn:hover { background: #218838; }
+        .checkbox-list { margin: 10px 0; }
+        .checkbox-list label { display: block; margin: 5px 0; }
     </style>
+</head>
 <body>
-   <h2>Registrar muestra recibida</h2>
 
-<form action="{{ route('remisiones.recibida') }}" method="POST">
-    @csrf
+    <h1>📋 Recepción de muestra</h1>
 
-    <input type="hidden" name="muestra_enviada_id" value="{{ $remision->id }}">
-<p><strong>Remisión:</strong> #{{ $remision->id }} del {{ $remision->fecha }}</p>
+    <h2>Remisión #{{ $remision->id }}</h2>
 
+    <form method="POST" action="{{ route('remisiones.recibida') }}">
+        @csrf
 
+        <!-- ID de la remisión enviada -->
+        <input type="hidden" name="muestra_enviada_id" value="{{ $remision->id }}">
 
+        <!-- Selección de Técnicas -->
+        <h3>🧪 Seleccionar técnicas</h3>
+        <div class="checkbox-list">
+            @foreach ($tecnicas as $tecnica)
+                <label>
+                    <input type="checkbox" name="tecnicas[]" value="{{ $tecnica->id }}">
+                    {{ $tecnica->nombre }}
+                </label>
+            @endforeach
+        </div>
 
-<label>Selecciona técnicas:</label>
-<div style="display: flex; flex-wrap: wrap; gap: 10px;">
-    @foreach($tecnicas as $tecnica)
-        <label style="border: 1px solid #ccc; padding: 8px; border-radius: 6px; background: #f9f9f9;">
-            <input type="checkbox" name="tecnicas[]" value="{{ $tecnica->id }}">
-            {{ $tecnica->nombre }}
-        </label>
-    @endforeach
-</div>
+        <!-- Selección de Animales -->
+        <h3>🐾 Animales remitidos</h3>
+        @if ($remision->persona && $remision->persona->animales->isNotEmpty())
+            <div class="checkbox-list">
+                @foreach ($remision->persona->animales as $animal)
+                    <label>
+                        <input type="checkbox" name="animales[]" value="{{ $animal->id }}">
+                        {{ $animal->nombre }} ({{ $animal->especie->nombre ?? '—' }}, {{ $animal->edad }} años)
+                    </label>
+                @endforeach
+            </div>
+        @else
+            <p>⚠️ Este cliente no tiene animales registrados.</p>
+        @endif
 
-    <button type="submit">Guardar</button>
-</form>
-
+        <br>
+        <button type="submit" class="btn">💾 Guardar Recepción</button>
+    </form>
 
 </body>
 </html>

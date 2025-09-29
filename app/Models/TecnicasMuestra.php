@@ -69,8 +69,9 @@ class TecnicasMuestra extends Model
 	public function getFormatoAttribute()
 {
     return match (strtolower($this->nombre)) {
-        'flotación', 'sedimentación', 'baermann', 'centrifugación', 'mc master' => 'copro_fresco',
+        'flotación', 'sedimentación', 'centrifugación', 'mc master' => 'copro_fresco',
         'hemograma automático' => 'hemograma',
+		 'baermann' => 'bearman',
         'frotis directo', 'wright', 'tinción de giemsa', 'kinyoun' => 'copro_fresco', // si quieres incluirlos ahí
         default => 'generico',
     };

@@ -42,7 +42,7 @@ class Animale extends Model
 
 	protected $fillable = [
 		'duenio_id',
-		//'nombre',
+		'nombre',
 		'especie_id',
 		'raza_id',
 		'sexo_id',
@@ -74,9 +74,19 @@ class Animale extends Model
 		return $this->hasMany(RelacionItemsEnsayoDetallesMuestra::class, 'animal_id');
 	}
 
+	public function remisionesRecibidas()
+	{
+		return $this->belongsToMany(RemisionMuestraRecibe::class, 'remision_recibe_animales')
+			->withTimestamps();
+	}
 
 	public function tecnicasAsignadas()
 	{
-		return $this->hasMany(AnimalTecnicaResultado::class, 'animal_id');
+		return $this->belongsToMany(
+			TecnicasMuestra::class,
+			'animal_tecnica_resultado', // tabla pivote
+			'animal_id',                // clave en la pivote que referencia a animales
+			'tecnica_id'                // clave en la pivote que referencia a tecnicas
+		)->withPivot('id', 'remision_muestra_recibe_id'); // 👈 ahora sí puedes acceder al pivot
 	}
 }

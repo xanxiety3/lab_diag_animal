@@ -18,46 +18,44 @@
     <h1>🐾 Asignar animales a la técnica "{{ $tecnica->nombre }}"</h1>
     <h2>📋 Remisión #{{ $remision->id }}</h2>
 
-    @if ($animales->isNotEmpty())
-        <form method="POST" action="{{ route('resultados.guardar_animales', [
-    'tecnica'        => $tecnica->id,
-    'remisionRecibe' => $remisionRecibe->id
-]) }}">
-            @csrf
+   @if ($remision->animales->isNotEmpty())
+    <form method="POST" action="{{ route('resultados.guardar_animales', [
+        'tecnica'        => $tecnica->id,
+        'remisionRecibe' => $remisionRecibe->id
+    ]) }}">
+        @csrf
 
-            <input type="hidden" name="remision_id" value="{{ $remision->id }}">
-            <input type="hidden" name="tecnica_id" value="{{ $tecnica->id }}">
+        <input type="hidden" name="remision_id" value="{{ $remision->id }}">
+        <input type="hidden" name="tecnica_id" value="{{ $tecnica->id }}">
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Seleccionar</th>
-                        <th>Nombre</th>
-                        <th>Especie</th>
-                        <th>Raza</th>
-                        <th>Edad</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($animales as $animal)
-                        <tr>
-                            <td>
-                                <input type="checkbox" name="animales[]" value="{{ $animal->id }}">
-                            </td>
-                            <td>{{ $animal->nombre }}</td>
-                            <td>{{ $animal->especie?->nombre ?? '—' }}</td>
-                            <td>{{ $animal->raza?->nombre ?? '—' }}</td>
-                            <td>{{ $animal->edad }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <table>
+            <thead>
+                <tr>
+                    <th>Seleccionar</th>
+                    <th>Nombre</th>
+                    <th>Especie</th>
+                    <th>Raza</th>
+                    <th>Edad</th>
+                </tr>
+            </thead>
+            <tbody>
+            @if ($animales->isNotEmpty())
+    @foreach ($animales as $animal)
+        <tr>
+            <td>
+                <input type="checkbox" name="animales[]" value="{{ $animal->id }}">
+            </td>
+            <td>{{ $animal->nombre }}</td>
+            <td>{{ $animal->especie?->nombre ?? '—' }}</td>
+            <td>{{ $animal->raza?->nombre ?? '—' }}</td>
+            <td>{{ $animal->edad }}</td>
+        </tr>
+    @endforeach
+@else
+    <p>No hay animales asociados a esta remisión.</p>
+@endif
 
-            <button type="submit" class="btn">💾 Guardar asignación</button>
-        </form>
-    @else
-        <p>No hay animales asociados al propietario de esta remisión.</p>
-    @endif
+
 
 </body>
 </html>

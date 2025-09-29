@@ -44,12 +44,17 @@ class RemisionMuestraEnvio extends Model
 	}
 
 	public function tiposMuestras()
-{
-    return $this->belongsToMany(TiposMuestra::class, 'remision_tipo_muestra', 'remision_id', 'tipo_muestra_id')
-                ->withPivot('cantidad_muestra', 'refrigeracion', 'observaciones')
-                ->withTimestamps();
-}
+	{
+		return $this->belongsToMany(TiposMuestra::class, 'remision_tipo_muestra', 'remision_id', 'tipo_muestra_id')
+			->withPivot('cantidad_muestra', 'refrigeracion', 'observaciones')
+			->withTimestamps();
+	}
 
+	public function animales()
+	{
+		return $this->belongsToMany(Animale::class, 'remision_recibe_animales')
+			->withTimestamps();
+	}
 
 
 
@@ -68,7 +73,7 @@ class RemisionMuestraEnvio extends Model
 		return $this->hasMany(RelacionItemsEnsayo::class, 'remision_id');
 	}
 
-	
+
 
 	public function verificacion_criterios()
 	{

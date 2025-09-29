@@ -44,15 +44,15 @@ class RemisionesController extends Controller
 
 
 
-
-    public function showForm()
+    public function showForm(Request $request)
     {
-
         $tiposMuestra = TiposMuestra::all();
         $clientes = Persona::all();
 
+        // Cliente preseleccionado desde la redirección
+        $selectedCliente = $request->get('cliente_id');
 
-        return view('remisiones.remision_enviada', compact('tiposMuestra', 'clientes'));
+        return view('remisiones.remision_enviada', compact('tiposMuestra', 'clientes', 'selectedCliente'));
     }
 
     public function store(Request $request)
@@ -60,7 +60,9 @@ class RemisionesController extends Controller
         $request->validate([
             'fecha' => 'required|date',
             'cliente_id' => 'required|exists:personas,id',
-            'tipos_muestra' => 'required|array',
+            'tipos_muestra' => 'required|array|min:1',
+            'tipos_muestra.*.activo' => 'nullable|boolean',
+
         ]);
 
         $remision = RemisionMuestraEnvio::create([
@@ -70,14 +72,15 @@ class RemisionesController extends Controller
         ]);
 
         foreach ($request->tipos_muestra as $tipoId => $datos) {
-            if (!empty($datos['activo']) && isset($datos['cantidad'], $datos['refrigeracion'])) {
+            if (isset($datos['activo']) && $datos['activo'] == 1) {
                 $remision->tiposMuestras()->attach($tipoId, [
-                    'cantidad_muestra' => $datos['cantidad'],
-                    'refrigeracion' => $datos['refrigeracion'],
+                    'cantidad_muestra' => $datos['cantidad'] ?? 0,
+                    'refrigeracion' => $datos['refrigeracion'] ?? 0,
                     'observaciones' => $datos['observaciones'] ?? null,
                 ]);
             }
         }
+
 
         return redirect()->route('formulario.recibida', ['remision_id' => $remision->id])
 
@@ -110,6 +113,8 @@ class RemisionesController extends Controller
             'muestra_enviada_id' => 'required|exists:remision_muestra_envio,id',
             'tecnicas' => 'required|array',
             'tecnicas.*' => 'exists:tecnicas_muestra,id',
+            'animales' => 'required|array',
+            'animales.*' => 'exists:animales,id',
         ]);
 
         $muestraRecibe = RemisionMuestraRecibe::create([
@@ -118,8 +123,13 @@ class RemisionesController extends Controller
             'fecha' => now(),
         ]);
 
+        // Asignar técnicas
         $muestraRecibe->tecnicas()->attach($request->tecnicas);
 
-        return redirect()->route('dashboard')->with('success', 'Recepción de muestra registrada correctamente.');
+        // Asignar animales a esta recepción (nuevo)
+        $muestraRecibe->animales()->attach($request->animales);
+
+        return redirect()->route('dashboard')
+            ->with('success', 'Recepción de muestra registrada correctamente.');
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ResultadoCoproFresco extends Model
 {
-    protected $table = 'resultado_copro_fresco';
+    protected $table = 'resultados_copro_frescos';
 
     protected $fillable = [
         'resultado_id',

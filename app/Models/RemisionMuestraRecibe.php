@@ -59,10 +59,7 @@ class RemisionMuestraRecibe extends Model
 		return $this->belongsTo(RemisionMuestraEnvio::class, 'muestra_enviada_id');
 	}
 
-	public function persona()
-	{
-		return $this->belongsTo(Persona::class, 'responsable_id');
-	}
+
 
 	public function tecnicas()
 	{
@@ -74,7 +71,16 @@ class RemisionMuestraRecibe extends Model
 		);
 	}
 
+	public function animales()
+	{
+		return $this->belongsToMany(Animale::class, 'remision_recibe_animales')
+			->withTimestamps();
+	}
 
+	public function persona()
+	{
+		return $this->belongsTo(Persona::class, 'cliente_id');
+	}
 
 	public function responsable()
 	{

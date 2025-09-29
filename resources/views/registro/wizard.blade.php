@@ -94,6 +94,8 @@
                                     <div id="animales-wrapper">
                                         <div class="animal-item border p-3 mb-3">
                                 <div class="animal-row">
+                            <label>Nombre del Animal</label>
+                                    <input type="text" name="animales[0][nombre]" />
                             <select name="animales[0][especie_id]" class="especie-select" required>
                                 <option value="" disabled selected>Seleccione especie</option>
                                 @foreach ($especies as $especie)
@@ -123,6 +125,7 @@
                                     <label>Edad</label>
                                     <input type="number" name="animales[0][edad]" class="form-control" required value="{{ old('animales.0.edad') }}">
                                 </div>
+                              
                             </div>
                         </div>
 

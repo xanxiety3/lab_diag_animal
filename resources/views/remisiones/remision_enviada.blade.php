@@ -33,15 +33,15 @@
           <label for="fecha">Fecha</label>
           <input type="date" id="fecha" name="fecha" required value="{{ date('Y-m-d') }}">
         </div>
+<div class="form-group">
+  <label for="cliente_id">Cliente</label>
+  <input type="hidden" name="cliente_id" value="{{ $selectedCliente }}">
+  <input type="text" value="{{ $clientes->find($selectedCliente)?->nombre }}" readonly>
+</div>
 
-        <div class="form-group">
-          <label for="cliente_id">Cliente</label>
-          <select id="cliente_id" name="cliente_id" required>
-            @foreach ($clientes as $cliente)
-              <option value="{{ $cliente->id }}">{{ $cliente->nombres }}</option>
-            @endforeach
-          </select>
-        </div>
+
+</div>
+
 
         <div class="form-group full-width">
           <label id="observaciones1" for="observaciones">Observaciones generales</label>

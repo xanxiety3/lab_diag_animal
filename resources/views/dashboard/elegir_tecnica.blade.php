@@ -39,24 +39,35 @@
         </tbody>
     </table>
 
-    <h2>🔬 Técnicas asociadas</h2>
-    @if ($tecnicas->isNotEmpty())
-        <ul>
-            @foreach ($tecnicas as $tecnica)
-                <li>
-                    {{ $tecnica->nombre }}
-                    <a href="{{ route('resultados.asignar_animales', [
-                        'remision' => $remision->id,
-                        'tecnica' => $tecnica->id
-                    ]) }}" class="btn">
-                        ➕ Registrar resultados
-                    </a>
-                </li>
-            @endforeach
-        </ul>
-    @else
-        <p>No hay técnicas asociadas (aún no se recibió esta remisión).</p>
-    @endif
+   <h1>⚗️ Técnicas asociadas a la Remisión #{{ $remision->id }}</h1>
+
+@if($tecnicas->isNotEmpty())
+    <ul>
+       <ul>
+@foreach($tecnicas as $tecnica)
+    <li>
+        {{ $tecnica->nombre }}
+
+        @if (!($tecnica->tiene_resultado ?? false))
+           <a href="{{ route('resultados.asignar_animales', [
+    'remision' => $remision->id,
+    'tecnica'  => $tecnica->id
+]) }}" class="btn">
+    ➕ Registrar resultado
+</a>
+
+        @else
+            <span class="chip ok">✅ Resultado registrado</span>
+        @endif
+    </li>
+@endforeach
+</ul>
+
+    </ul>
+@else
+    <p>No hay técnicas asociadas a esta recepción.</p>
+@endif
+
 
 </body>
 </html>

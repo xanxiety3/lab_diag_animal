@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Resultado extends Model
 {
     protected $fillable = [
-        'remision_id',
+
         'usuario_id',
-        'tecnica_muestra_id',
         'estado',
+        'muestra_recibe_tecnica_id',
+        'animal_id',
+
     ];
 
     // Relación con remisión

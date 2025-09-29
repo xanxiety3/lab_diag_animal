@@ -101,7 +101,7 @@ class RegistroController extends Controller
 
         $validated = $request->validate([
             'animales' => 'required|array|min:1',
-           // 'nombre' => 'nullable|string',
+            'animales.*.nombre' => 'required|string|max:255',
             'animales.*.especie_id' => 'required|integer',
             'animales.*.raza_id' => 'required|integer',
             'animales.*.sexo_id' => 'required|integer',
@@ -111,7 +111,7 @@ class RegistroController extends Controller
         foreach ($validated['animales'] as $animalData) {
             Animale::create([
                 'duenio_id' => $personaId,
-               // 'nombre' => $animalData['nombre'],
+                'nombre' => $animalData['nombre'],
                 'especie_id' => $animalData['especie_id'],
                 'raza_id' => $animalData['raza_id'],
                 'sexo_id' => $animalData['sexo_id'],
@@ -155,7 +155,9 @@ class RegistroController extends Controller
         // Limpieza opcional
         session()->forget('persona_id');
 
-        return redirect()->route('remision.formulario')->with('success', 'Registro de cliente finalizado exitosamente. Ahora puede diligenciar la remisión de muestras.');
+        return redirect()
+            ->route('remision.formulario', ['cliente_id' => $personaId])
+            ->with('success', 'Cliente creado y seleccionado automáticamente.');
     }
 
 

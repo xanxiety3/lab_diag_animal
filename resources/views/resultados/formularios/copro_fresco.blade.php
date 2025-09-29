@@ -33,8 +33,8 @@
                         <th>Consistencia</th>
                         <th>Moco</th>
                         <th>Sangre</th>
-                        <th>Celulas Epiteliales</th>
-                        <th>Celulas Vegetales</th>
+                        <th>Células Epiteliales</th>
+                        <th>Células Vegetales</th>
                         <th>Huevos</th>
                         <th>Quistes</th>
                         <th>Levaduras</th>
@@ -47,11 +47,20 @@
                         <tr>
                             <td>
                                 <input type="text" name="codigo_interno[{{ $animal->id }}]" value="{{ $animal->id }}" readonly>
-                                <input type="hidden" name="pivot_id[{{ $animal->id }}]" value="{{ $animal->pivot_id }}">
+                                <!-- 👇 Aquí ya usamos el pivot_id de la relación -->
+                                <input type="hidden" name="pivot_id[{{ $animal->id }}]" value="{{ $animal->tecnicasAsignadas->first()->pivot->id }}">
                             </td>
-                            <td><input type="text" name="nombre[{{ $animal->id }}]" value="{{ $animal->nombre ?? '—' }}" readonly></td>
-                            <td><input type="text" name="sexo[{{ $animal->id }}]" value="{{ $animal->sexo?->descripcion ?? '—' }}" readonly></td>
-                            <td><input type="text" name="especie[{{ $animal->id }}]" value="{{ $animal->especie?->nombre ?? '—' }}" readonly></td>
+                            <td><input type="text" value="{{ $animal->nombre ?? '—' }}" readonly></td>
+                            <td>
+                                <input type="text" value="{{ $animal->sexo?->descripcion ?? '—' }}" readonly>
+                                <input type="hidden" name="sexo[{{ $animal->id }}]" value="{{ $animal->sexo?->descripcion ?? '' }}">
+                            </td>
+
+                            <td>
+                                <input type="text" value="{{ $animal->especie?->nombre ?? '—' }}" readonly>
+                                <input type="hidden" name="especie[{{ $animal->id }}]" value="{{ $animal->especie?->nombre ?? '' }}">
+                            </td>
+
                             <td><input type="text" name="color[{{ $animal->id }}]"></td>
                             <td><input type="text" name="consistencia[{{ $animal->id }}]"></td>
                             <td><input type="text" name="moco[{{ $animal->id }}]"></td>
