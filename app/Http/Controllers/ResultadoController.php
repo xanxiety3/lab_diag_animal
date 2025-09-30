@@ -10,7 +10,7 @@ use App\Models\Resultado;
 use App\Models\ResultadoBearman;
 use App\Models\ResultadoCoproFresco;
 use App\Models\ResultadoHemograma;
-use App\Models\ResultadoMcMaster;
+use App\Models\ResultadoMacMaster;
 use App\Models\TecnicasMuestra;
 use App\Models\TiposMuestra;
 use Illuminate\Http\Request;
@@ -98,23 +98,42 @@ class ResultadoController extends Controller
 
 
 
-public function asignarAnimales($remisionId, $tecnicaId)
-{
-    // Buscar la remisión enviada con sus animales asociados desde el pivot
-    $remision = RemisionMuestraEnvio::with('animales')->findOrFail($remisionId);
+    // public function asignarAnimales($remisionId, $tecnicaId)
+    // {
+    //     // Buscar la remisión enviada con sus animales asociados desde el pivot
+    //     $remision = RemisionMuestraEnvio::with('animales')->findOrFail($remisionId);
 
-    // Buscar la recepción asociada (si existe)
-    $remisionRecibe = $remision->remision_muestra_recibe;
+    //     // Buscar la recepción asociada (si existe)
+    //     $remisionRecibe = $remision->remision_muestra_recibe;
 
-    // Obtener la técnica
-    $tecnica = TecnicasMuestra::findOrFail($tecnicaId);
+    //     // Obtener la técnica
+    //     $tecnica = TecnicasMuestra::findOrFail($tecnicaId);
 
-    // Animales asociados a la remisión
-    $animales = $remision->animales;
+    //     // Animales asociados a la remisión
+    //     $animales = $remision->animales;
 
-    return view('dashboard.asignar_animales', compact('remision', 'remisionRecibe', 'tecnica', 'animales'));
-}
+    //     return view('dashboard.asignar_animales', compact('remision', 'remisionRecibe', 'tecnica', 'animales'));
+    // }
 
+    public function asignarAnimales($remisionId, $tecnicaId)
+    {
+        // Buscar la remisión enviada
+        $remision = RemisionMuestraEnvio::findOrFail($remisionId);
+
+        // Buscar la recepción asociada (si existe)
+        $remisionRecibe = $remision->remision_muestra_recibe;
+        if ($remisionRecibe instanceof \Illuminate\Database\Eloquent\Collection) {
+            $remisionRecibe = $remisionRecibe->first();
+        }
+
+        // Obtener la técnica
+        $tecnica = TecnicasMuestra::findOrFail($tecnicaId);
+
+        // Animales asociados a la recepción
+        $animales = $remisionRecibe ? $remisionRecibe->animales : collect();
+
+        return view('dashboard.asignar_animales', compact('remision', 'remisionRecibe', 'tecnica', 'animales'));
+    }
 
 
     public function guardarAnimales($tecnicaId, $remisionRecibeId, Request $request)
@@ -167,18 +186,23 @@ public function asignarAnimales($remisionId, $tecnicaId)
 
     public function storeResultadoMultiple(Request $request, $remisionRecibeId, $tecnicaId)
     {
+       
+
         $tecnica = TecnicasMuestra::findOrFail($tecnicaId);
 
+
         foreach ($request->codigo_interno as $animalId => $codigo) {
-            // Buscar el pivot_id enviado desde el formulario (puedes pasarlo como input hidden)
-            $pivotId = $request->pivot_id[$animalId];
+            // 🔹 Buscar el pivot correcto según remisión y técnica
+            $pivot = \App\Models\MuestraRecibeTecnica::where('muestra_recibe_id', $remisionRecibeId)
+                ->where('tecnica_id', $tecnicaId)
+                ->firstOrFail(); // Si no existe, lanza error para no romper FK
 
             // 1. Crear resultado base
             $resultado = Resultado::create([
-                'usuario_id'               => auth()->id(),
-                'estado'                   => 'finalizado',
-                'muestra_recibe_tecnica_id' => $pivotId,   // ✅ ahora correcto
-                'animal_id'                => $animalId,
+                'usuario_id'                => auth()->id(),
+                'estado'                    => 'finalizado',
+                'muestra_recibe_tecnica_id' => $pivot->id, // ✅ id correcto
+                'animal_id'                 => $animalId,
             ]);
 
             // 2. Crear resultado específico según el formato
@@ -202,8 +226,9 @@ public function asignarAnimales($remisionId, $tecnicaId)
                         'observaciones' => $request->observaciones[$animalId],
                     ]);
                     break;
-                case 'mcmaster':
-                    ResultadoMcMaster::create([
+
+                case 'mac_master':
+                    ResultadoMacMaster::create([
                         'resultado_id'       => $resultado->id,
                         'codigo_interno'     => $codigo,
                         'cantidad_muestra'   => $request->cantidad_muestra[$animalId],
@@ -257,8 +282,14 @@ public function asignarAnimales($remisionId, $tecnicaId)
             }
         }
 
+        $remision = RemisionMuestraRecibe::find($remisionRecibeId);
 
-        return redirect()->route('resultados.elegir_tecnica', $remisionRecibeId)
+        if ($remision->todasTecnicasConResultado()) {
+            $remision->update(['registro_resultado' => 1]);
+        }
+
+
+        return redirect()->route('dashboard')
             ->with('success', '✅ Resultados registrados correctamente.');
     }
 

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ResultadoBearman extends Model
 {
-    protected $table = 'resultado_bearman';
+    protected $table = 'resultados_bearmen';
 
     protected $fillable = [
         'resultado_id',

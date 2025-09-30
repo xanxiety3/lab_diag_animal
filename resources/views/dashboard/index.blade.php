@@ -3,45 +3,61 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard de Remisiones Recibidas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Remisiones</title>
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
 </head>
 
 <body>
 
-    <header>
-        <h1>📋 Dashboard de Remisiones Recibidas</h1>
+    <input type="checkbox" id="menu-toggle" />
+    <label for="menu-toggle" class="menu-icon">&#9776;</label>
+
+    <!-- Sidebar izquierdo -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="{{ asset('img/logoSinfondo.png') }}" alt="Logo" class="logo">
+            <h2>Laboratorio</h2>
+        </div>
         <nav>
             <a href="{{ route('registro.wizard') }}">➕ Nueva Remisión</a>
-            <a href="{{ route('logout') }}">🚪 Cerrar Sesión</a>
+            <a href="{{ route('resultados.elegir_tecnica', ['remisionEnvioId' => 0]) }}">📊 Resultados</a>
+            <a href="{{ route('register') }}">👤 Registrar Usuario</a>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="logout-btn">🚪 Cerrar Sesión</button>
+            </form>
         </nav>
-    </header>
+    </aside>
 
-    <main>
+    <main class="main-content">
+        <header>
+            <h1>📋 Dashboard de Remisiones Recibidas</h1>
+        </header>
+
+        <!-- Filtros -->
+        <section class="filtros">
+            <form action="{{ route('dashboard') }}" method="GET">
+                <label for="filtro-resultado">Resultado:</label>
+                <select name="filtro_resultado" id="filtro-resultado">
+                    <option value="todos" {{ request('filtro_resultado') == 'todos' ? 'selected' : '' }}>Todos</option>
+                    <option value="con" {{ request('filtro_resultado') == 'con' ? 'selected' : '' }}>Con resultado</option>
+                    <option value="sin" {{ request('filtro_resultado') == 'sin' ? 'selected' : '' }}>Sin resultado</option>
+                </select>
+
+                <label for="filtro-estado">Estado:</label>
+                <select name="filtro_estado" id="filtro-estado">
+                    <option value="todos" {{ request('filtro_estado') == 'todos' ? 'selected' : '' }}>Todos</option>
+                    <option value="aceptadas" {{ request('filtro_estado') == 'aceptadas' ? 'selected' : '' }}>Aceptadas</option>
+                    <option value="rechazadas" {{ request('filtro_estado') == 'rechazadas' ? 'selected' : '' }}>Rechazadas</option>
+                </select>
+
+                <button type="submit">Aplicar</button>
+            </form>
+        </section>
+
+        <!-- Tabla de remisiones -->
         <section class="tabla-remisiones">
-
-            <!-- FILTROS -->
-            <div class="filtros">
-                <form action="{{ route('dashboard') }}" method="GET">
-                    <label for="filtro-resultado">Resultado:</label>
-                    <select name="filtro_resultado" id="filtro-resultado">
-                        <option value="todos" {{ request('filtro_resultado') == 'todos' ? 'selected' : '' }}>Todos</option>
-                        <option value="con" {{ request('filtro_resultado') == 'con' ? 'selected' : '' }}>Con resultado</option>
-                        <option value="sin" {{ request('filtro_resultado') == 'sin' ? 'selected' : '' }}>Sin resultado</option>
-                    </select>
-
-                    <label for="filtro-estado">Estado:</label>
-                    <select name="filtro_estado" id="filtro-estado">
-                        <option value="todos" {{ request('filtro_estado') == 'todos' ? 'selected' : '' }}>Todos</option>
-                        <option value="aceptadas" {{ request('filtro_estado') == 'aceptadas' ? 'selected' : '' }}>Aceptadas</option>
-                        <option value="rechazadas" {{ request('filtro_estado') == 'rechazadas' ? 'selected' : '' }}>Rechazadas</option>
-                    </select>
-
-                    <button type="submit">Aplicar</button>
-                </form>
-            </div>
-            <!-- FIN FILTROS -->
-
             <table>
                 <thead>
                     <tr>
@@ -56,7 +72,6 @@
                 <tbody>
                     @foreach ($remisiones as $remision)
                         <tr>
-                            <!-- Mostramos el id real de la remisión enviada -->
                             <td>{{ $remision->muestra_enviada_id }}</td>
                             <td>{{ $remision->fecha }}</td>
                             <td>{{ $remision->responsable->name ?? 'Sin responsable' }}</td>
@@ -69,14 +84,11 @@
                                     Sin tipo
                                 @endif
                             </td>
-
                             <td>
                                 {{ $remision->registro_resultado ? '✅ Resultado registrado' : '⏳ Sin resultado' }}
                                 {{ $remision->rechazada ? '❌ Rechazada' : '✔️ Aceptada' }}
                             </td>
-
                             <td>
-                                <!-- Enlace con muestra_enviada_id -->
                                 <a href="{{ route('show.remision', $remision->muestra_enviada_id) }}" class="btn-ver">Ver</a>
                             </td>
                         </tr>

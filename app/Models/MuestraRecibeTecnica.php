@@ -14,4 +14,10 @@ protected $fillable = [
         'tecnica_id',
         // agrega aquí cualquier otro campo que estés guardando
     ];
+
+    public function resultados()
+{
+    return $this->hasMany(Resultado::class, 'muestra_recibe_tecnica_id');
+}
+
 }

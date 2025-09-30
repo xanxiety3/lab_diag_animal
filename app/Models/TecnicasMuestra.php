@@ -67,14 +67,28 @@ class TecnicasMuestra extends Model
 
 
 	public function getFormatoAttribute()
-{
-    return match (strtolower($this->nombre)) {
-        'flotación', 'sedimentación', 'centrifugación', 'mc master' => 'copro_fresco',
-        'hemograma automático' => 'hemograma',
-		 'baermann' => 'bearman',
-        'frotis directo', 'wright', 'tinción de giemsa', 'kinyoun' => 'copro_fresco', // si quieres incluirlos ahí
-        default => 'generico',
-    };
-}
+	{
+		return match (strtolower(trim($this->nombre))) {
+			'flotación', 'sedimentación', 'centrifugación' => 'copro_fresco',
+			'hemograma automático' => 'hemograma',
+			'baermann' => 'bearman',
+			'mc master' => 'mac_master',
+			'frotis directo', 'wright', 'tinción de giemsa', 'kinyoun' => 'copro_fresco', // si quieres incluirlos ahí
+			default => 'generico',
+		};
+	}
 
+
+
+	public function resultados()
+	{
+		return $this->hasManyThrough(
+			Resultado::class,
+			MuestraRecibeTecnica::class,
+			'tecnica_id',               // FK en pivot hacia TecnicasMuestra
+			'muestra_recibe_tecnica_id', // FK en resultados
+			'id',                       // PK de TecnicasMuestra
+			'id'                        // PK del pivot
+		);
+	}
 }

@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ResultadoMcMaster extends Model
+class ResultadoMacMaster extends Model
 {
-    protected $table = 'resultado_mcmaster';
+    protected $table = 'resultado_mcmasters';
 
     protected $fillable = [
         'resultado_id',

@@ -1,109 +1,149 @@
-/* Reset básico */
+/* Reset */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
+/* Botón Volver */
+.btn-back {
+    display: inline-block;
+    margin-top: 10px;
+    margin-bottom: 25px;
+    padding: 8px 15px;
+    border-radius: 12px;
+    background: #95a5a6; /* gris suave */
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+    background: #7f8c8d;
+    transform: translateY(-2px);
+}
+
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f4f8;
+    font-family: 'Poppins', sans-serif;
+    background: #f0f4f3;
+    color: #2d3436;
+}
+
+/* Wrapper centrado */
+.auth-wrapper {
     display: flex;
-    align-items: center;
     justify-content: center;
-    min-height: 100vh;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
 }
 
-/* Contenedor del formulario */
-.auth-container {
-    background-color: #ffffff;
-    padding: 2.5rem 2rem;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+/* Tarjeta de registro */
+.auth-card {
+    background: #ffffff;
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
     width: 100%;
-    max-width: 400px;
+    max-width: 450px;
     text-align: center;
+    animation: fadeIn 0.5s ease;
 }
 
-/* Título */
-.auth-container h1 {
-    font-size: 1.5rem;
-    margin-bottom: 0.25rem;
-    color: #1a202c;
+/* Logo */
+.auth-card .logo {
+    width: 100px;
+    margin-bottom: 15px;
+    animation: fadeInDown 0.7s ease;
 }
 
-.auth-container p {
-    font-size: 0.95rem;
-    color: #718096;
-    margin-bottom: 1.5rem;
+/* Header */
+.auth-header h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #27ae60;
 }
 
-/* Etiquetas e inputs */
-label {
-    display: block;
+.auth-header p {
+    color: #7f8c8d;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+/* Inputs */
+.input-group {
+    margin-bottom: 20px;
     text-align: left;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-    color: #2d3748;
 }
 
-input {
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #2d3436;
+}
+
+.input-group input,
+.input-group select {
     width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #cbd5e0;
-    border-radius: 6px;
-    margin-bottom: 1rem;
-    font-size: 0.95rem;
-    transition: border 0.2s;
+    padding: 10px 15px;
+    border-radius: 12px;
+    border: 1px solid #cfd8dc;
+    outline: none;
+    transition: all 0.3s ease;
 }
 
-input:focus {
-    outline: none;
-    border-color: #4fd1c5;
+.input-group input:focus,
+.input-group select:focus {
+    border-color: #27ae60;
+    box-shadow: 0 0 10px rgba(39, 174, 96, 0.2);
 }
 
 /* Botón */
-button {
+.btn-submit {
     width: 100%;
-    padding: 0.6rem;
-    background-color: #0f9d8a;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background: #2ecc71;
     color: white;
     font-weight: 600;
-    border: none;
-    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    font-size: 16px;
+    transition: all 0.3s ease;
 }
 
-button:hover {
-    background-color: #0c8272;
+.btn-submit:hover {
+    background: #27ae60;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(39,174,96,0.3);
 }
 
-/* Link de registro */
-.auth-container a {
-    color: #6b46c1;
+/* Footer */
+.auth-footer {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #7f8c8d;
+}
+
+.auth-footer a {
+    color: #27ae60;
     text-decoration: none;
+    font-weight: 500;
 }
 
-.auth-container a:hover {
+.auth-footer a:hover {
     text-decoration: underline;
 }
 
-
-select {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #cbd5e0;
-    border-radius: 6px;
-    margin-bottom: 1rem;
-    font-size: 0.95rem;
-    background-color: #fff;
-    appearance: none;
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px);}
+    to { opacity: 1; transform: translateY(0);}
 }
 
-.footer {
-    text-align: center;
-    font-size: 0.8rem;
-    color: #a0aec0;
-    margin-top: 1rem;
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px);}
+    to { opacity: 1; transform: translateY(0);}
 }

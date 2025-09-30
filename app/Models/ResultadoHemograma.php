@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ResultadoHemograma extends Model
 {
-    protected $table = 'resultado_hemogramas';
+    protected $table = 'resultados_hemogramas';
 
     protected $fillable = [
         'resultado_id',

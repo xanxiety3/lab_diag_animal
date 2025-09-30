@@ -50,14 +50,6 @@ class RemisionMuestraEnvio extends Model
 			->withTimestamps();
 	}
 
-	public function animales()
-	{
-		return $this->belongsToMany(Animale::class, 'remision_recibe_animales')
-			->withTimestamps();
-	}
-
-
-
 	public function persona()
 	{
 		return $this->belongsTo(Persona::class, 'cliente_id');

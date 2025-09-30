@@ -36,7 +36,7 @@
 <div class="form-group">
   <label for="cliente_id">Cliente</label>
   <input type="hidden" name="cliente_id" value="{{ $selectedCliente }}">
-  <input type="text" value="{{ $clientes->find($selectedCliente)?->nombre }}" readonly>
+  <input type="text" value="{{ $clientes->find($selectedCliente)?->nombres }}" readonly>
 </div>
 
 

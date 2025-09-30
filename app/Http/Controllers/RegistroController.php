@@ -79,7 +79,7 @@ class RegistroController extends Controller
     {
         $validated = $request->validate([
             'tipo_documento_id' => 'required|integer',
-            'numero_documento' => 'required|string',
+            'numero_documento' => 'required|unique:personas,numero_documento',
             'nombres' => 'required|string',
             'apellidos' => 'required|string',
             'correo' => 'required|email',

@@ -7,36 +7,41 @@
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
 </head>
 <body>
-    <div class="login-container">
-        <div class="image-section">
-            <!-- Imagen: puedes reemplazar la ruta por la tuya -->
-            <img src="{{ asset('img/logoSinfondo.png') }}" alt="Login Image">
+    <div class="login-wrapper">
+        <!-- Sección izquierda: imagen / branding -->
+        <div class="login-image">
+            <img src="{{ asset('img/logoSinfondo.png') }}" alt="Logo">
+            <h1>Lab Animal</h1>
+            <p>Diagnóstico Veterinario Profesional</p>
         </div>
-        <div class="form-section">
+
+        <!-- Sección derecha: formulario -->
+        <div class="login-form">
             <h2>Bienvenido</h2>
+
+            @if(session('error'))
+                <div class="error">{{ session('error') }}</div>
+            @endif
+
             <form method="POST" action="{{ route('login') }}">
                 @csrf
+                <div class="input-group">
+                    <input type="email" name="email" required autofocus>
+                    <label>Correo Electrónico</label>
+                </div>
 
-                <label for="email">Correo electrónico</label>
-                <input type="email" name="email" required autofocus>
-
-                <label for="password">Contraseña</label>
-                <input type="password" name="password" required>
+                <div class="input-group">
+                    <input type="password" name="password" required>
+                    <label>Contraseña</label>
+                </div>
 
                 <button type="submit">Iniciar Sesión</button>
+
             </form>
         </div>
     </div>
 </body>
 </html>
-
-
-
-
-
-
-
-
 
 
 

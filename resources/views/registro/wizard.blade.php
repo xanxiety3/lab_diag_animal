@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ahora este, como puedes ver, tambien incluye tipo dashboard. eso no debe ir ya que ya hicimos uno <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">

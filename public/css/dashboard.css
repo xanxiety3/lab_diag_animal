@@ -1,89 +1,217 @@
-body {
-    font-family: Arial, sans-serif;
-    background: #f8fafc;
+/* Reset básico */
+* {
     margin: 0;
     padding: 0;
-    color: #333;
+    box-sizing: border-box;
 }
 
-header {
-    background: #2563eb;
-    color: #fff;
-    padding: 1rem 2rem;
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f0f4f3;
+    color: #2d3436;
+}
+
+/* Sidebar */
+#menu-toggle {
+    display: none;
+}
+
+.menu-icon {
+    font-size: 28px;
+    padding: 15px;
+    cursor: pointer;
+    display: none;
+}
+
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;
+    height: 100%;
+    background: #2ecc71;
+    color: white;
+    padding: 30px 15px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 20px;
+    transition: transform 0.3s ease;
+}
+
+.sidebar .logo {
+    width: 150px;
+    margin-bottom: 10px;
+    margin-left: 15px;
+}
+
+.sidebar h2 {
+    font-size: 20px;
+    margin-bottom: 30px;
+}
+
+.sidebar nav a {
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.sidebar nav a:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.logout-btn {
+    padding: 10px 15px;
+    width: 100%;
+    background: #e74c3c;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.logout-btn:hover {
+    background: #c0392b;
+}
+
+/* Main content */
+.main-content {
+    margin-left: 240px;
+    padding: 30px 40px;
+}
+
+header h1 {
+    margin-bottom: 20px;
+}
+
+/* Filtros */
+.filtros {
+    margin-bottom: 20px;
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
     align-items: center;
 }
 
-header h1 { margin: 0; }
-
-header nav a {
-    color: #fff;
-    margin-left: 1rem;
-    text-decoration: none;
-    font-weight: bold;
+.filtros select, .filtros button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #cfd8dc;
+    outline: none;
+    transition: all 0.3s;
 }
 
-header nav a:hover {
-    text-decoration: underline;
+.filtros select:focus {
+    border-color: #27ae60;
+    box-shadow: 0 0 10px rgba(46,204,113,0.2);
 }
 
-main {
-    padding: 2rem;
+.filtros button {
+    background: #2ecc71;
+    color: white;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
 }
 
+.filtros button:hover {
+    background: #27ae60;
+    transform: translateY(-2px);
+}
+
+/* Tabla */
 table {
     width: 100%;
     border-collapse: collapse;
     background: #fff;
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+    animation: fadeIn 0.5s ease;
 }
 
-th, td {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #e2e8f0;
+thead {
+    background: #27ae60;
+    color: white;
+}
+
+thead th {
+    padding: 12px 15px;
     text-align: left;
 }
 
-th {
-    background: #f1f5f9;
+tbody td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e0e0e0;
 }
 
-tr:hover {
-    background: #f9fafb;
+tbody tr:hover {
+    background: #f0f9f5;
 }
 
 .badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
     display: inline-block;
-    background: #e0f2fe;
-    color: #0369a1;
-    padding: 0.25rem 0.5rem;
-    border-radius: 5px;
-    font-size: 0.8rem;
-}
-
-.btn-ver, .btn-editar {
-    padding: 0.3rem 0.6rem;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 0.85rem;
+    background: #5c646a;
+    color: #fff;
 }
 
 .btn-ver {
-    background: #22c55e;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #2ecc71;
     color: white;
+    text-decoration: none;
+    transition: all 0.3s;
 }
 
-.btn-editar {
-    background: #f59e0b;
-    color: white;
+.btn-ver:hover {
+    background: #27ae60;
+    transform: translateY(-2px);
 }
 
-.btn-ver:hover { background: #16a34a; }
-.btn-editar:hover { background: #d97706; }
-
+/* Paginación */
 .paginacion {
-    margin-top: 1rem;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+/* Responsivo */
+@media (max-width: 1024px) {
+    .menu-icon {
+        display: block;
+        color: #2ecc71;
+    }
+    .sidebar {
+        transform: translateX(-100%);
+        z-index: 20;
+    }
+    #menu-toggle:checked + .menu-icon + .sidebar {
+        transform: translateX(0);
+    }
+    .main-content {
+        margin-left: 0;
+    }
 }

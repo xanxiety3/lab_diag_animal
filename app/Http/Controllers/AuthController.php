@@ -87,7 +87,7 @@ public function login(Request $request)
             'estado' => 'activo'
         ]);
 
-        return redirect()->route('welcome')->with('success', '¡Usuario registrado correctamente!');
+        return redirect()->route('dashboard');
     }
 }
 

@@ -8,6 +8,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class RemisionMuestraRecibe
@@ -113,5 +114,21 @@ class RemisionMuestraRecibe extends Model
 			return $query->where('rechazada', 1);
 		}
 		return $query; // 'todos'
+	}
+
+	public function todasTecnicasConResultado()
+	{
+		foreach ($this->tecnicas as $tecnica) {
+			$resultado = DB::table('resultados')
+				->join('muestra_recibe_tecnica', 'resultados.muestra_recibe_tecnica_id', '=', 'muestra_recibe_tecnica.id')
+				->where('muestra_recibe_tecnica.tecnica_id', $tecnica->id)
+				->where('muestra_recibe_tecnica.muestra_recibe_id', $this->id)
+				->exists();
+
+			if (!$resultado) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
