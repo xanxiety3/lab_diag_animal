@@ -23,6 +23,7 @@ class ResetLabSeeder extends Seeder
         DB::table('remision_muestra_envio')->truncate();
         DB::table('animales')->truncate();
         DB::table('personas')->truncate();
+        DB::table('resultados')->truncate();
         DB::table('direcciones')->truncate();
         DB::table('muestra_recibe_tecnica')->truncate();
         DB::table('remision_recibe_animales')->truncate();

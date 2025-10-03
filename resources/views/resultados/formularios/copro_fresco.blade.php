@@ -4,121 +4,127 @@
     <meta charset="UTF-8">
     <title>Registrar Resultado Copro Fresco</title>
     <style>
-        .copro-card {
-    border-left: 5px solid #f39c12;
-}
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9fdfb;
+            margin: 20px;
+            color: #333;
+        }
 
-.copro-card legend {
-    font-weight: bold;
-    color: #f39c12;
-}
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #27ae60; /* Verde corporativo */
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
 
-.copro-card input, .copro-card select, .copro-card textarea {
-    background-color: #fffaf0;
-}
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f6f8;
-    margin: 0;
-    padding: 20px;
-    color: #333;
-}
+        header h1 {
+            font-size: 22px;
+            margin: 0;
+        }
 
-h1, h2 {
-    color: #2c3e50;
-    margin-bottom: 20px;
-}
+        header h2 {
+            font-size: 15px;
+            margin: 4px 0 0;
+            font-weight: normal;
+        }
 
-.btn {
-    background-color: #28a745;
-    color: white;
-    padding: 10px 18px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    font-weight: bold;
-    transition: 0.2s;
-}
+        .back-btn {
+            background: white;
+            color: #27ae60;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.3s;
+        }
 
-.btn:hover {
-    background-color: #218838;
-}
+        .back-btn:hover {
+            background: #e9f7ef;
+        }
 
-.dashboard-btn {
-    background-color: #007BFF;
-    margin-bottom: 20px;
-}
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0px 2px 6px rgba(0,0,0,0.08);
+        }
 
-.dashboard-btn:hover {
-    background-color: #0056b3;
-}
+        thead {
+            background: #27ae60;
+            color: white;
+        }
 
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
+        th, td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
 
-/* Tarjetas uniformes */
-.card {
-    background-color: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    margin-bottom: 20px;
-}
+        tbody tr:nth-child(even) {
+            background: #f4faf6;
+        }
 
-/* Inputs y selects */
-input[type="text"], input[type="number"], input[type="date"], select, textarea {
-    width: 100%;
-    padding: 8px;
-    margin-top: 6px;
-    margin-bottom: 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box;
-}
+        input[type="text"] {
+            width: 100%;
+            max-width: 120px;
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 13px;
+            box-sizing: border-box;
+        }
 
-/* Textareas */
-textarea {
-    resize: vertical;
-    min-height: 60px;
-}
+        input[readonly] {
+            background: #f7f7f7;
+            color: #555;
+        }
 
-/* Tablas para Copro Fresco y Bearman */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: white;
-    border-radius: 8px;
-    overflow: hidden;
-}
+        .btn {
+            display: block;
+            margin: 25px auto 0;
+            padding: 12px 30px;
+            background: #27ae60;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
 
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-}
+        .btn:hover {
+            background: #1e874b;
+        }
 
-th {
-    background-color: #f0f0f0;
-}
-
-thead tr {
-    background-color: #e9ecef;
-}
-
-tr:nth-child(even) {
-    background-color: #fafafa;
-}
-
+        @media (max-width: 1000px) {
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <h1>📋 Registrar Resultado Copro Fresco - Técnica "{{ $tecnica->nombre }}"</h1>
-    <h2>Remisión #{{ $remisionRecibeId }}</h2>
+    <header>
+        <div>
+            <h1>📋 Registrar Resultado Copro Fresco</h1>
+            <h2>Técnica "{{ $tecnica->nombre }}" - Remisión #{{ $remisionRecibeId }}</h2>
+        </div>
+        <a href="/dashboard" class="back-btn">⬅ Volver al Dashboard</a>
+    </header>
 
     @if($animales->isNotEmpty())
         <form method="POST" action="{{ route('resultados.store_resultado_multiple', [$remisionRecibeId, $tecnica->id]) }}">
@@ -135,8 +141,8 @@ tr:nth-child(even) {
                         <th>Consistencia</th>
                         <th>Moco</th>
                         <th>Sangre</th>
-                        <th>Células Epiteliales</th>
-                        <th>Células Vegetales</th>
+                        <th>Cél. Epiteliales</th>
+                        <th>Cél. Vegetales</th>
                         <th>Huevos</th>
                         <th>Quistes</th>
                         <th>Levaduras</th>
@@ -149,7 +155,6 @@ tr:nth-child(even) {
                         <tr>
                             <td>
                                 <input type="text" name="codigo_interno[{{ $animal->id }}]" value="{{ $animal->id }}" readonly>
-                                <!-- 👇 Aquí ya usamos el pivot_id de la relación -->
                                 <input type="hidden" name="pivot_id[{{ $animal->id }}]" value="{{ $animal->tecnicasAsignadas->first()->pivot->id }}">
                             </td>
                             <td><input type="text" value="{{ $animal->nombre ?? '—' }}" readonly></td>
@@ -157,12 +162,10 @@ tr:nth-child(even) {
                                 <input type="text" value="{{ $animal->sexo?->descripcion ?? '—' }}" readonly>
                                 <input type="hidden" name="sexo[{{ $animal->id }}]" value="{{ $animal->sexo?->descripcion ?? '' }}">
                             </td>
-
                             <td>
                                 <input type="text" value="{{ $animal->especie?->nombre ?? '—' }}" readonly>
                                 <input type="hidden" name="especie[{{ $animal->id }}]" value="{{ $animal->especie?->nombre ?? '' }}">
                             </td>
-
                             <td><input type="text" name="color[{{ $animal->id }}]"></td>
                             <td><input type="text" name="consistencia[{{ $animal->id }}]"></td>
                             <td><input type="text" name="moco[{{ $animal->id }}]"></td>
@@ -179,7 +182,6 @@ tr:nth-child(even) {
                 </tbody>
             </table>
 
-            <br>
             <button type="submit" class="btn">💾 Guardar Resultados</button>
         </form>
     @else

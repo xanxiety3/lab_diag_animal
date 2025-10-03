@@ -1,4 +1,4 @@
-ahora este, como puedes ver, tambien incluye tipo dashboard. eso no debe ir ya que ya hicimos uno <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -7,18 +7,9 @@ ahora este, como puedes ver, tambien incluye tipo dashboard. eso no debe ir ya q
     
 </head>
 <body >
-    
-<header class="main-header">
-    <div class="logo-container">
-        <img src="{{ asset('img/logoSinfondo.png') }}" alt="Logo" class="logo">
-        <h1 class="title">Veterinaria Registro</h1>
-    </div>
-    <nav class="nav-links">
-        <a href="#">Inicio</a>
-        <a href="#">Registros</a>
-        <a href="#">Configuración</a>
-        <a href="#">Cerrar sesión</a>
-    </nav>
+<header class="wizard-header">
+    <h1 class="wizard-title">🐾 Registro de Cliente, Animal y Dirección</h1>
+    <a href="{{ route('dashboard') }}" class="btn-back-dashboard">🏠 Volver al Dashboard</a>
 </header>
 <main class="form-wrapper">
     <section class="form-section">
