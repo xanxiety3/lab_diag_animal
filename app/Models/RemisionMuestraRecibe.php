@@ -69,7 +69,7 @@ class RemisionMuestraRecibe extends Model
 			'muestra_recibe_tecnica',      // tabla pivot
 			'muestra_recibe_id',           // FK en pivot hacia este modelo
 			'tecnica_id'                   // FK en pivot hacia tecnicas_muestra
-		);
+		)->withPivot('cantidad'); 
 	}
 
 	public function animales()

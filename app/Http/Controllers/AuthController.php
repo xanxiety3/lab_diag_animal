@@ -75,6 +75,8 @@ public function login(Request $request)
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'numero_documento' => ['required', 'string', 'max:20', 'unique:users'],
+            'telefono' => ['required', 'string', 'max:15'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'rol_id' => ['required', 'integer'],
         ]);
@@ -82,6 +84,8 @@ public function login(Request $request)
         User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'numero_documento' => $request->numero_documento,
+            'telefono' => $request->telefono,
             'password' => Hash::make($request->password),
             'rol_id' => $request->rol_id,
             'estado' => 'activo'

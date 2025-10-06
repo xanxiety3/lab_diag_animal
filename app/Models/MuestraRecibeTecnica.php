@@ -12,7 +12,7 @@ class MuestraRecibeTecnica extends Model
 protected $fillable = [
         'muestra_enviada_id',
         'tecnica_id',
-        // agrega aquí cualquier otro campo que estés guardando
+        'cantidad',
     ];
 
     public function resultados()

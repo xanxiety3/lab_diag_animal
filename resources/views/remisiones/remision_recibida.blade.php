@@ -11,7 +11,6 @@
             color: #333;
         }
 
-        /* Header */
         header {
             background: #27ae60;
             color: white;
@@ -28,14 +27,8 @@
             gap: 10px;
         }
 
-        header img {
-            height: 40px;
-        }
-
-        header h1 {
-            font-size: 1.2rem;
-            margin: 0;
-        }
+        header img { height: 40px; }
+        header h1 { font-size: 1.2rem; margin: 0; }
 
         header .btn-back {
             background: white;
@@ -47,18 +40,9 @@
             font-weight: bold;
             transition: background 0.3s ease;
         }
+        header .btn-back:hover { background: #ecfdf3; }
 
-        header .btn-back:hover {
-            background: #ecfdf3;
-        }
-
-        /* Contenedor principal */
-        main {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-        }
-
+        main { max-width: 900px; margin: 40px auto; padding: 20px; }
         .card {
             background: white;
             border-radius: 10px;
@@ -66,41 +50,40 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
-        h2, h3 {
-            margin-top: 0;
-            color: #27ae60;
-        }
+        h2, h3 { margin-top: 0; color: #27ae60; }
 
-        /* Checkbox list */
+        /* Checkbox con cantidad */
         .checkbox-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 12px;
             margin: 15px 0;
         }
 
-        .checkbox-list label {
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             background: #f9f9f9;
             padding: 10px 14px;
             border: 1px solid #ddd;
             border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            display: flex;
-            align-items: center;
             gap: 8px;
         }
 
-        .checkbox-list label:hover {
+        .checkbox-item:hover {
             background: #ecfdf3;
             border-color: #27ae60;
         }
 
-        .checkbox-list input {
-            accent-color: #27ae60;
+        .checkbox-item input[type="checkbox"] { accent-color: #27ae60; }
+        .checkbox-item input[type="number"] {
+            width: 70px;
+            padding: 4px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
         }
 
-        /* Botón principal */
         .btn {
             background: #27ae60;
             color: white;
@@ -113,10 +96,7 @@
             transition: background 0.3s ease;
             margin-top: 20px;
         }
-
-        .btn:hover {
-            background: #219150;
-        }
+        .btn:hover { background: #219150; }
 
         .empty {
             background: #fff3cd;
@@ -145,17 +125,19 @@
 
             <form method="POST" action="{{ route('remisiones.recibida') }}">
                 @csrf
-
                 <input type="hidden" name="muestra_enviada_id" value="{{ $remision->id }}">
 
                 <!-- Selección de Técnicas -->
                 <h3>🧪 Seleccionar Técnicas</h3>
                 <div class="checkbox-list">
                     @foreach ($tecnicas as $tecnica)
-                        <label>
-                            <input type="checkbox" name="tecnicas[]" value="{{ $tecnica->id }}">
-                            {{ $tecnica->nombre }}
-                        </label>
+                        <div class="checkbox-item">
+                            <label>
+                                <input type="checkbox" name="tecnicas[{{ $tecnica->id }}][id]" value="{{ $tecnica->id }}">
+                                {{ $tecnica->nombre }}
+                            </label>
+                            <input type="number" name="tecnicas[{{ $tecnica->id }}][cantidad]" placeholder="Cantidad" min="0">
+                        </div>
                     @endforeach
                 </div>
 
@@ -164,9 +146,11 @@
                 @if ($remision->persona && $remision->persona->animales->isNotEmpty())
                     <div class="checkbox-list">
                         @foreach ($remision->persona->animales as $animal)
-                            <label>
-                                <input type="checkbox" name="animales[]" value="{{ $animal->id }}">
-                                {{ $animal->nombre }} ({{ $animal->especie->nombre ?? '—' }}, {{ $animal->edad }} años)
+                            <label class="checkbox-item">
+                                <span>
+                                    <input type="checkbox" name="animales[]" value="{{ $animal->id }}">
+                                    {{ $animal->nombre }} ({{ $animal->especie->nombre ?? '—' }}, {{ $animal->edad }} años)
+                                </span>
                             </label>
                         @endforeach
                     </div>

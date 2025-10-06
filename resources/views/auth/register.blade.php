@@ -31,6 +31,16 @@
                 </div>
 
                 <div class="input-group">
+                    <label for="numero_documento">Numero de documento</label>
+                    <input type="text" name="numero_documento" id="numero_documento" value="{{ old('numero_documento') }}" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="text" name="telefono" id="telefono" value="{{ old('telefono') }}" required>
+                </div>
+
+                <div class="input-group">
                     <label for="password">Contraseña</label>
                     <input type="password" name="password" id="password" required>
                 </div>

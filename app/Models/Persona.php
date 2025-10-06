@@ -43,7 +43,11 @@ class Persona extends Model
 		'nombres',
 		'apellidos',
 		'correo',
-		'telefono'
+		'telefono',
+		'es_empresa',        // nuevo
+		'nombre_empresa',    // nuevo
+		'es_sena',           // nuevo
+		'rol_sena',
 	];
 
 	public function tipos_documento()

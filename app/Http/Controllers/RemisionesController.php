@@ -107,29 +107,41 @@ class RemisionesController extends Controller
 
 
 
-    public function storeRecibido(Request $request)
-    {
-        $request->validate([
-            'muestra_enviada_id' => 'required|exists:remision_muestra_envio,id',
-            'tecnicas' => 'required|array',
-            'tecnicas.*' => 'exists:tecnicas_muestra,id',
-            'animales' => 'required|array',
-            'animales.*' => 'exists:animales,id',
-        ]);
+ public function storeRecibido(Request $request)
+{
+    $request->validate([
+        'muestra_enviada_id' => 'required|exists:remision_muestra_envio,id',
+        'tecnicas' => 'required|array',
+        'animales' => 'required|array',
+        'animales.*' => 'exists:animales,id',
+    ]);
 
-        $muestraRecibe = RemisionMuestraRecibe::create([
-            'muestra_enviada_id' => $request->muestra_enviada_id,
-            'responsable_id' => auth()->id(),
-            'fecha' => now(),
-        ]);
+    $muestraRecibe = RemisionMuestraRecibe::create([
+        'muestra_enviada_id' => $request->muestra_enviada_id,
+        'responsable_id' => auth()->id(),
+        'fecha' => now(),
+    ]);
 
-        // Asignar técnicas
-        $muestraRecibe->tecnicas()->attach($request->tecnicas);
-
-        // Asignar animales a esta recepción (nuevo)
-        $muestraRecibe->animales()->attach($request->animales);
-
-        return redirect()->route('dashboard')
-            ->with('success', 'Recepción de muestra registrada correctamente.');
+    // Construir el array para attach solo con las seleccionadas
+    $tecnicasAttach = [];
+    foreach ($request->tecnicas as $tecnica) {
+        if (!empty($tecnica['id']) && intval($tecnica['cantidad']) > 0) {
+            $tecnicasAttach[$tecnica['id']] = [
+                'cantidad' => intval($tecnica['cantidad']),
+            ];
+        }
     }
+
+    // Guardar técnicas seleccionadas
+    if (!empty($tecnicasAttach)) {
+        $muestraRecibe->tecnicas()->attach($tecnicasAttach);
+    }
+
+    // Guardar animales seleccionados
+    $muestraRecibe->animales()->attach($request->animales);
+
+    return redirect()->route('dashboard')
+        ->with('success', 'Recepción de muestra registrada correctamente.');
+}
+
 }

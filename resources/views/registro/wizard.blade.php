@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Registro Cliente, Animal y Dirección</title>
     <link rel="stylesheet" href="{{ asset('css/wizard.css') }}">
-    
+
 </head>
-<body >
-<header class="wizard-header">
-    <h1 class="wizard-title">🐾 Registro de Cliente, Animal y Dirección</h1>
-    <a href="{{ route('dashboard') }}" class="btn-back-dashboard">🏠 Volver al Dashboard</a>
-</header>
-<main class="form-wrapper">
-    <section class="form-section">
+
+<body>
+    <header class="wizard-header">
+        <h1 class="wizard-title">🐾 Registro de Cliente, Animal y Dirección</h1>
+        <a href="{{ route('dashboard') }}" class="btn-back-dashboard">🏠 Volver al Dashboard</a>
+    </header>
+    <main class="form-wrapper">
+        <section class="form-section">
             <div class="container mt-5">
                 <h2 class="mb-4">Registro de Cliente, Animal y Dirección</h2>
 
@@ -29,110 +31,169 @@
 
                 {{-- Paso 1: Persona --}}
                 @if ($step === 'persona')
-                <div id="paso-persona" class="form-step active">
-                    <form method="POST" action="{{ route('registro.persona.guardar') }}">
-                        @csrf
-                        <h4 class="mb-3">1. Datos de la Persona</h4>
+                    <div id="paso-persona" class="form-step active">
+                        <form method="POST" action="{{ route('registro.persona.guardar') }}">
+                            @csrf
+                            <h4 class="mb-3">1. Datos de la Persona</h4>
 
-                        <div class="mb-3">
-                            <label for="tipo_documento_id" class="form-label">Tipo De Documento</label>
-                            <select name="tipo_documento_id" id="tipo_documento_id" class="form-select" required>
-                                <option value="" disabled selected>Seleccione un tipo de documento</option>
-                                @foreach ($tipoDoc as $tipo)
-                                    <option value="{{ $tipo->id }}" {{ old('tipo_documento_id') == $tipo->id ? 'selected' : '' }}>
-                                        {{ $tipo->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('tipo_documento_id')
-                                <small class="text-danger">{{ $message }}</small>
-                            @enderror
-                        </div>
+                            <div class="mb-3">
+                                <label for="tipo_documento_id" class="form-label">Tipo De Documento</label>
+                                <select name="tipo_documento_id" id="tipo_documento_id" class="form-select" required>
+                                    <option value="" disabled selected>Seleccione un tipo de documento</option>
+                                    @foreach ($tipoDoc as $tipo)
+                                        <option value="{{ $tipo->id }}"
+                                            {{ old('tipo_documento_id') == $tipo->id ? 'selected' : '' }}>
+                                            {{ $tipo->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('tipo_documento_id')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
 
-                        <div class="mb-3">
-                            <label>Número de Documento</label>
-                            <input name="numero_documento" class="form-control" required value="{{ old('numero_documento') }}">
-                        </div>
-                        <div class="mb-3">
-                            <label>Nombres</label>
-                            <input name="nombres" class="form-control" required value="{{ old('nombres') }}">
-                        </div>
-                        <div class="mb-3">
-                            <label>Apellidos</label>
-                            <input name="apellidos" class="form-control" required value="{{ old('apellidos') }}">
-                        </div>
-                        <div class="mb-3">
-                            <label>Correo</label>
-                            <input type="email" name="correo" class="form-control" required value="{{ old('correo') }}">
-                        </div>
-                        <div class="mb-3">
-                            <label>Teléfono</label>
-                            <input name="telefono" class="form-control" required value="{{ old('telefono') }}">
-                        </div>
+                            <div class="mb-3">
+                                <label>Número de Documento</label>
+                                <input name="numero_documento" class="form-control" required
+                                    value="{{ old('numero_documento') }}">
+                            </div>
+                            <div class="mb-3">
+                                <label>Nombres</label>
+                                <input name="nombres" class="form-control" required value="{{ old('nombres') }}">
+                            </div>
+                            <div class="mb-3">
+                                <label>Apellidos</label>
+                                <input name="apellidos" class="form-control" required value="{{ old('apellidos') }}">
+                            </div>
+                            <div class="mb-3">
+                                <label>Correo</label>
+                                <input type="email" name="correo" class="form-control" required
+                                    value="{{ old('correo') }}">
+                            </div>
+                            <div class="mb-3">
+                                <label>Teléfono</label>
+                                <input name="telefono" class="form-control" required value="{{ old('telefono') }}">
+                            </div>
 
-                        <button type="submit" class="btn btn-primary">Guardar y continuar</button>
-                    </form>
-                </div>
+                            {{-- ✅ Nuevo: Empresa --}}
+                            <div class="mb-3">
+                                <label>
+                                    <input type="checkbox" name="es_empresa" id="chk-empresa" value="1"
+                                        {{ old('es_empresa') ? 'checked' : '' }}>
+                                    ¿Es empresa?
+                                </label>
+                            </div>
+
+                            <div class="mb-3" id="campo-empresa" style="display: none;">
+                                <label>Nombre de la empresa</label>
+                                <input type="text" name="nombre_empresa" class="form-control"
+                                    value="{{ old('nombre_empresa') }}">
+                                @error('nombre_empresa')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label>
+                                    <input type="checkbox" name="es_sena" id="chk-sena" value="1"
+                                        {{ old('es_sena') ? 'checked' : '' }}>
+                                    ¿Es cliente SENA?
+                                </label>
+                            </div>
+
+                            <div class="mb-3" id="campo-sena" style="display: none;">
+                                <label>Rol</label>
+                                <input type="text" name="rol_sena" class="form-control" value="{{ old('rol_sena') }}">
+                                @error('rol_sena')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function() {
+                                    const chkEmpresa = document.getElementById("chk-empresa");
+                                    const campoEmpresa = document.getElementById("campo-empresa");
+                                    const chkSena = document.getElementById("chk-sena");
+                                    const campoSena = document.getElementById("campo-sena");
+
+                                    function toggleCampos() {
+                                        campoEmpresa.style.display = chkEmpresa.checked ? "block" : "none";
+                                        campoSena.style.display = chkSena.checked ? "block" : "none";
+                                    }
+
+                                    chkEmpresa.addEventListener("change", toggleCampos);
+                                    chkSena.addEventListener("change", toggleCampos);
+
+                                    toggleCampos(); // inicializar
+                                });
+                            </script>
+
+                            <button type="submit" class="btn btn-primary">Guardar y continuar</button>
+                        </form>
+                    </div>
                 @endif
 
-                            {{-- Paso 2: Animales --}}
-                            @if ($step === 'animales')
-                            <div id="paso-animal" class="form-step active">
-                                <form method="POST" action="{{ route('registro.animales.guardar') }}">
-                                    @csrf
-                                    <h4 class="mb-3">2. Datos del Animal</h4>
 
-                                    <div id="animales-wrapper">
-                                        <div class="animal-item border p-3 mb-3">
-                                <div class="animal-row">
-                            <label>Nombre del Animal</label>
-                                    <input type="text" name="animales[0][nombre]" />
-                            <select name="animales[0][especie_id]" class="especie-select" required>
-                                <option value="" disabled selected>Seleccione especie</option>
-                                @foreach ($especies as $especie)
-                                    <option value="{{ $especie->id }}">{{ $especie->nombre }}</option>
-                                @endforeach
-                            </select>
+                {{-- Paso 2: Animales --}}
+                @if ($step === 'animales')
+                    <div id="paso-animal" class="form-step active">
+                        <form method="POST" action="{{ route('registro.animales.guardar') }}">
+                            @csrf
+                            <h4 class="mb-3">2. Datos del Animal</h4>
 
-                            <select name="animales[0][raza_id]" class="raza-select" required>
-                                <option value="" disabled selected>Seleccione raza</option>
-                            </select>
-                        </div>
-                                        
+                            <div id="animales-wrapper">
+                                <div class="animal-item border p-3 mb-3">
+                                    <div class="animal-row">
+                                        <label>Nombre del Animal</label>
+                                        <input type="text" name="animales[0][nombre]" />
+                                        <select name="animales[0][especie_id]" class="especie-select" required>
+                                            <option value="" disabled selected>Seleccione especie</option>
+                                            @foreach ($especies as $especie)
+                                                <option value="{{ $especie->id }}">{{ $especie->nombre }}</option>
+                                            @endforeach
+                                        </select>
+
+                                        <select name="animales[0][raza_id]" class="raza-select" required>
+                                            <option value="" disabled selected>Seleccione raza</option>
+                                        </select>
+                                    </div>
 
 
-                                <div class="mb-2">
-                                    <label>Sexo</label>
-                                    <select name="animales[0][sexo_id]" class="form-select" required>
-                                        <option value="" disabled selected>Seleccione sexo</option>
-                                        @foreach ($sexos as $sexo)
-                                            <option value="{{ $sexo->id }}" {{ old('animales.0.sexo_id') == $sexo->id ? 'selected' : '' }}>
-                                                {{ $sexo->descripcion }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+
+                                    <div class="mb-2">
+                                        <label>Sexo</label>
+                                        <select name="animales[0][sexo_id]" class="form-select" required>
+                                            <option value="" disabled selected>Seleccione sexo</option>
+                                            @foreach ($sexos as $sexo)
+                                                <option value="{{ $sexo->id }}"
+                                                    {{ old('animales.0.sexo_id') == $sexo->id ? 'selected' : '' }}>
+                                                    {{ $sexo->descripcion }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label>Edad</label>
+                                        <input type="number" name="animales[0][edad]" class="form-control" required
+                                            value="{{ old('animales.0.edad') }}">
+                                    </div>
+
                                 </div>
-                                <div class="mb-2">
-                                    <label>Edad</label>
-                                    <input type="number" name="animales[0][edad]" class="form-control" required value="{{ old('animales.0.edad') }}">
-                                </div>
-                              
                             </div>
-                        </div>
 
-                        <button type="button" class="btn btn-secondary mb-3" onclick="agregarAnimal()">+ Añadir otro animal</button>
-                        <br>
-                        <button type="submit" class="btn btn-primary">Guardar y continuar</button>
-                    </form>
-                </div>
+                            <button type="button" class="btn btn-secondary mb-3" onclick="agregarAnimal()">+ Añadir
+                                otro animal</button>
+                            <br>
+                            <button type="submit" class="btn btn-primary">Guardar y continuar</button>
+                        </form>
+                    </div>
                 @endif
 
                 {{-- Paso 3: Dirección --}}
                 @if ($step === 'direccion')
-                <div id="paso-direccion" class="form-step active">
-                    <form method="POST" action="{{ route('registro.direccion.guardar') }}">
-                        @csrf
-                        <h4 class="mb-3">3. Dirección</h4>
+                    <div id="paso-direccion" class="form-step active">
+                        <form method="POST" action="{{ route('registro.direccion.guardar') }}">
+                            @csrf
+                            <h4 class="mb-3">3. Dirección</h4>
                             <div class="mb-3">
                                 <label>Departamento</label>
                                 <select name="departamento_id" id="departamento-select" class="form-select" required>
@@ -150,54 +211,59 @@
                                     {{-- Se llenará dinámicamente --}}
                                 </select>
                             </div>
-                    
-            <div class="mb-3">
-                <label>Tipo de Dirección</label>
-                <select name="tipo_direccion_id" class="form-select" required>
-                    <option value="" disabled selected>Seleccione tipo de dirección</option>
-                    @foreach ($tiposDireccion as $tipoDireccion)
-                        <option value="{{ $tipoDireccion->id }}" {{ old('tipo_direccion_id') == $tipoDireccion->id ? 'selected' : '' }}>
-                            {{ $tipoDireccion->nombre }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
 
-            <div class="mb-3">
-                <label>Tipo de Ubicación</label>
-                <select name="tipo_ubicacion_id" class="form-select" required>
-                    <option value="" disabled selected>Seleccione tipo de ubicación</option>
-                    @foreach ($tiposUbicacion as $tipoUbicacion)
-                        <option value="{{ $tipoUbicacion->id }}" {{ old('tipo_ubicacion_id') == $tipoUbicacion->id ? 'selected' : '' }}>
-                            {{ $tipoUbicacion->nombre }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+                            <div class="mb-3">
+                                <label>Tipo de Dirección</label>
+                                <select name="tipo_direccion_id" class="form-select" required>
+                                    <option value="" disabled selected>Seleccione tipo de dirección</option>
+                                    @foreach ($tiposDireccion as $tipoDireccion)
+                                        <option value="{{ $tipoDireccion->id }}"
+                                            {{ old('tipo_direccion_id') == $tipoDireccion->id ? 'selected' : '' }}>
+                                            {{ $tipoDireccion->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
 
-            <div class="mb-3">
-                <label>Dirección Detallada</label>
-                <input name="direccion_detallada" class="form-control" required value="{{ old('direccion_detallada') }}">
-            </div>
+                            <div class="mb-3">
+                                <label>Tipo de Ubicación</label>
+                                <select name="tipo_ubicacion_id" class="form-select" required>
+                                    <option value="" disabled selected>Seleccione tipo de ubicación</option>
+                                    @foreach ($tiposUbicacion as $tipoUbicacion)
+                                        <option value="{{ $tipoUbicacion->id }}"
+                                            {{ old('tipo_ubicacion_id') == $tipoUbicacion->id ? 'selected' : '' }}>
+                                            {{ $tipoUbicacion->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Dirección Detallada</label>
+                                <input name="direccion_detallada" class="form-control" required
+                                    value="{{ old('direccion_detallada') }}">
+                            </div>
 
 
-                        <button type="submit" class="btn btn-success">Finalizar Registro</button>
-                    </form>
-                </div>
+                            <button type="submit" class="btn btn-success">Finalizar Registro</button>
+                        </form>
+                    </div>
                 @endif
 
                 {{-- Paso 4: Completado --}}
                 @if ($step === 'completado')
-                <div class="form-step active">
-                    <div class="alert alert-success">
-                        <h5>✅ Registro completado exitosamente.</h5>
+                    <div class="form-step active">
+                        <div class="alert alert-success">
+                            <h5>✅ Registro completado exitosamente.</h5>
+                        </div>
+                        <a href="{{ route('registro.wizard', ['step' => 'persona']) }}"
+                            class="btn btn-primary">Registrar otro</a>
                     </div>
-                    <a href="{{ route('registro.wizard', ['step' => 'persona']) }}" class="btn btn-primary">Registrar otro</a>
-                </div>
                 @endif
             </div>
-    </section>
-</main>
-<script src="{{ asset('js/wizard.js') }}"></script>
+        </section>
+    </main>
+    <script src="{{ asset('js/wizard.js') }}"></script>
 </body>
+
 </html>

@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegistroController;
 use App\Http\Controllers\RemisionesController;
 use App\Http\Controllers\ResultadoController;
+use App\Http\Controllers\WordExportController;
 use App\Http\Middleware\IsUserAuth;
 
 // -------------------------------------------------------------------------
@@ -19,6 +20,7 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login'); /
 Route::post('/login', [AuthController::class, 'login']);                      // Procesar login
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register'); // Formulario de registro
 Route::post('/register', [AuthController::class, 'register']);                         // Procesar registro
+Route::get('/export-word/{id}', [WordExportController::class, 'exportarRemision']); // Exportar remisión a Word
 
 
 // -------------------------------------------------------------------------
@@ -68,6 +70,11 @@ Route::middleware(['auth', IsUserAuth::class])->group(function () {
 
 
         // -------------------------
+
+
+
+
+
         //registrar animales a una tecnica
         Route::get(
             '/resultados/{remision}/{tecnica}/asignar-animales',
@@ -98,9 +105,9 @@ Route::middleware(['auth', IsUserAuth::class])->group(function () {
         ])->name('resultados.create');
     });
 
-    Route::post('resultados/guardar-multiple/{remisionRecibe}/{tecnica}', 
-    [ResultadoController::class, 'storeResultadoMultiple'])
-    ->name('resultados.store_resultado_multiple');
-
-
+    Route::post(
+        'resultados/guardar-multiple/{remisionRecibe}/{tecnica}',
+        [ResultadoController::class, 'storeResultadoMultiple']
+    )
+        ->name('resultados.store_resultado_multiple');
 });

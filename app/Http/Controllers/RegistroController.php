@@ -84,13 +84,25 @@ class RegistroController extends Controller
             'apellidos' => 'required|string',
             'correo' => 'required|email',
             'telefono' => 'required|string',
+
+            // Nuevos campos
+            'es_empresa' => 'nullable|boolean',
+            'nombre_empresa' => 'required_if:es_empresa,1|string|max:255|nullable',
+            'es_sena' => 'nullable|boolean',
+            'rol_sena' => 'required_if:es_sena,1|string|max:255|nullable',
         ]);
 
+        // Normalizamos los checkboxes a 0/1
+        $validated['es_empresa'] = $request->has('es_empresa') ? 1 : 0;
+        $validated['es_sena'] = $request->has('es_sena') ? 1 : 0;
+
         $persona = Persona::create($validated);
+
         session(['persona_id' => $persona->id]);
 
         return redirect()->route('registro.wizard', ['step' => 'animales']);
     }
+
 
     public function guardarAnimales(Request $request)
     {
