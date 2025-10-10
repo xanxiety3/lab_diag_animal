@@ -14,9 +14,14 @@ class AnimalTecnicaResultado extends Model
     ];
 
 
-public function animal()
-{
-    return $this->belongsTo(Animale::class, 'animal_id', 'id');
-}
+    public function animal()
+    {
+        return $this->belongsTo(Animale::class, 'animal_id', 'id');
+    }
 
+
+    public function tecnica()
+    {
+        return $this->belongsTo(TecnicasMuestra::class);
+    }
 }

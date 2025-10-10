@@ -80,10 +80,9 @@ class RemisionMuestraRecibe extends Model
 		)->withPivot('cantidad');
 	}
 
-	public function animales()
+	public function animalTecnicaResultados()
 	{
-		return $this->belongsToMany(Animale::class, 'remision_recibe_animales')
-			->withTimestamps();
+		return $this->hasMany(AnimalTecnicaResultado::class, 'remision_muestra_recibe_id');
 	}
 
 	public function persona()
