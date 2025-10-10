@@ -14,10 +14,71 @@ use App\Models\ResultadoMacMaster;
 use App\Models\TecnicasMuestra;
 use App\Models\TiposMuestra;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class ResultadoController extends Controller
 {
+
+
+    public function dashboardResultados()
+    {
+        // 1️⃣ Muestras por tipo de ubicación
+        $porUbicacion = DB::table('remision_muestra_recibe')
+            ->join('remision_muestra_envio', 'remision_muestra_envio.id', '=', 'remision_muestra_recibe.muestra_enviada_id')
+            ->join('direcciones', 'direcciones.cliente_id', '=', 'remision_muestra_envio.cliente_id')
+            ->join('tipos_ubicacion', 'tipos_ubicacion.id', '=', 'direcciones.tipo_ubicacion_id')
+            ->select('tipos_ubicacion.nombre as ubicacion', DB::raw('COUNT(remision_muestra_recibe.id) as total'))
+            ->groupBy('tipos_ubicacion.nombre')
+            ->orderByDesc('total')
+            ->limit(6)
+            ->get();
+
+
+        // 2️⃣ Muestras por tipo
+        $muestrasPorTipo = DB::table('remision_tipo_muestra')
+            ->join('tipos_muestra', 'remision_tipo_muestra.tipo_muestra_id', '=', 'tipos_muestra.id')
+            ->select('tipos_muestra.nombre as tipo', DB::raw('COUNT(remision_tipo_muestra.id) as total'))
+            ->groupBy('tipos_muestra.nombre')
+            ->orderByDesc('total')
+            ->get();
+
+        // 6️⃣ Tendencia de resultados registrados (últimos 6 meses)
+        $resultadosTendencia = DB::table('muestra_recibe_tecnica')
+            ->selectRaw('MONTH(created_at) as mes, COUNT(   *) as total')
+            ->groupBy('mes')
+            ->orderBy('mes')
+            ->get();
+
+
+        // 7️⃣ Distribución por tipo de técnica
+        $resultadosPorTecnica = DB::table('animal_tecnica_resultado')
+            ->join('tecnicas_muestra', 'animal_tecnica_resultado.tecnica_id', '=', 'tecnicas_muestra.id')
+            ->select('tecnicas_muestra.nombre as tecnica', DB::raw('COUNT(animal_tecnica_resultado.id) as total'))
+            ->groupBy('tecnicas_muestra.nombre')
+            ->orderByDesc('total')
+            ->get();
+
+
+        // 8️⃣ Porcentaje de muestras rechazadas vs aceptadas
+        $rechazadasVsAceptadas = DB::table('remision_muestra_recibe')
+            ->select(
+                DB::raw('SUM(CASE WHEN rechazada = 1 THEN 1 ELSE 0 END) as rechazadas'),
+                DB::raw('SUM(CASE WHEN rechazada = 0 THEN 1 ELSE 0 END) as aceptadas')
+            )
+            ->first();
+        return view('dashboard.dashboard_resultados', [
+            'porUbicacion' => $porUbicacion,
+            'muestrasPorTipo' => $muestrasPorTipo,
+            'resultadosTendencia' => $resultadosTendencia,
+            'resultadosPorTecnica' => $resultadosPorTecnica,
+            'rechazadas' => $rechazadasVsAceptadas,
+        ]);
+    }
+
+
+
+
 
 
     public function elegirMuestra($remisionEnvioId)
@@ -97,24 +158,6 @@ class ResultadoController extends Controller
 
 
 
-
-    // public function asignarAnimales($remisionId, $tecnicaId)
-    // {
-    //     // Buscar la remisión enviada con sus animales asociados desde el pivot
-    //     $remision = RemisionMuestraEnvio::with('animales')->findOrFail($remisionId);
-
-    //     // Buscar la recepción asociada (si existe)
-    //     $remisionRecibe = $remision->remision_muestra_recibe;
-
-    //     // Obtener la técnica
-    //     $tecnica = TecnicasMuestra::findOrFail($tecnicaId);
-
-    //     // Animales asociados a la remisión
-    //     $animales = $remision->animales;
-
-    //     return view('dashboard.asignar_animales', compact('remision', 'remisionRecibe', 'tecnica', 'animales'));
-    // }
-
     public function asignarAnimales($remisionId, $tecnicaId)
     {
         // Buscar la remisión enviada
@@ -186,7 +229,7 @@ class ResultadoController extends Controller
 
     public function storeResultadoMultiple(Request $request, $remisionRecibeId, $tecnicaId)
     {
-       
+
 
         $tecnica = TecnicasMuestra::findOrFail($tecnicaId);
 

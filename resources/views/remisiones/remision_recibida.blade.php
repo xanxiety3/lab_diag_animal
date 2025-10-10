@@ -1,167 +1,267 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Recepción de Muestra</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            background: #f5f7fa;
-            color: #333;
-        }
+  <meta charset="UTF-8">
+  <title>📋 Recepción de Muestra</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f7fafc;
+      margin: 0;
+      color: #333;
+    }
 
-        header {
-            background: #27ae60;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+    header {
+      background: #27ae60;
+      color: #fff;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        header .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    header h1 {
+      font-size: 1.2rem;
+      margin: 0;
+    }
 
-        header img { height: 40px; }
-        header h1 { font-size: 1.2rem; margin: 0; }
+    header .btn-back {
+      background: #fff;
+      color: #27ae60;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
 
-        header .btn-back {
-            background: white;
-            color: #27ae60;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.3s ease;
-        }
-        header .btn-back:hover { background: #ecfdf3; }
+    header .btn-back:hover {
+      background: #e8f5e9;
+    }
 
-        main { max-width: 900px; margin: 40px auto; padding: 20px; }
-        .card {
-            background: white;
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
+    main {
+      max-width: 950px;
+      margin: 30px auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 25px 40px;
+    }
 
-        h2, h3 { margin-top: 0; color: #27ae60; }
+    h2, h3 {
+      color: #27ae60;
+      border-bottom: 2px solid #27ae60;
+      padding-bottom: 4px;
+      margin-top: 25px;
+    }
 
-        /* Checkbox con cantidad */
-        .checkbox-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 12px;
-            margin: 15px 0;
-        }
+    .tecnica-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      background: #f9f9f9;
+      transition: 0.3s;
+    }
 
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #f9f9f9;
-            padding: 10px 14px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            gap: 8px;
-        }
+    .tecnica-card:hover {
+      background: #ecfdf3;
+    }
 
-        .checkbox-item:hover {
-            background: #ecfdf3;
-            border-color: #27ae60;
-        }
+    .tecnica-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
 
-        .checkbox-item input[type="checkbox"] { accent-color: #27ae60; }
-        .checkbox-item input[type="number"] {
-            width: 70px;
-            padding: 4px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
+    .form-control {
+      width: 80px;
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
 
-        .btn {
-            background: #27ae60;
-            color: white;
-            padding: 10px 16px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: background 0.3s ease;
-            margin-top: 20px;
-        }
-        .btn:hover { background: #219150; }
+    .btn-animales, .btn-submit {
+      background: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
 
-        .empty {
-            background: #fff3cd;
-            color: #856404;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ffeeba;
-        }
-    </style>
+    .btn-animales:hover, .btn-submit:hover {
+      background: #219150;
+    }
+
+    .btn-submit {
+      display: block;
+      margin: 30px auto 0;
+      font-size: 1rem;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 420px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .close-btn {
+      float: right;
+      cursor: pointer;
+      color: red;
+      font-weight: bold;
+    }
+
+    label {
+      display: block;
+      margin: 5px 0;
+    }
+  </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo-container">
-            <img src="{{ asset('img/logoSinfondo.png') }}" alt="Logo">
-            <h1>Recepción de Muestra</h1>
+<header>
+  <h1>📋 Recepción de Muestra - Remisión #{{ $remision->id }}</h1>
+  <a href="{{ route('dashboard') }}"><button class="btn-back">🏠 Volver</button></a>
+</header>
+
+<main>
+  <form method="POST" action="{{ route('remisiones.recibida') }}">
+    @csrf
+    <input type="hidden" name="muestra_enviada_id" value="{{ $remision->id }}">
+
+    @foreach ($tecnicas->groupBy('tipo_muestra_id') as $tipoId => $grupo)
+      <h3>{{ $grupo->first()->tipos_muestra->nombre }}</h3>
+
+      @foreach ($grupo as $tecnica)
+        <div class="tecnica-card">
+          <div class="tecnica-header">
+            <label>
+              <input type="checkbox" name="tecnicas[{{ $tecnica->id }}][id]" value="{{ $tecnica->id }}">
+              <strong>{{ $tecnica->nombre }} ({{ $tecnica->sigla ?? '—' }})</strong>
+            </label>
+            <span>💰 ${{ number_format($tecnica->valor_unitario, 0, ',', '.') }}</span>
+          </div>
+
+          <div style="margin-top:10px;">
+            Cantidad:
+            <input type="number" name="tecnicas[{{ $tecnica->id }}][cantidad]" class="form-control cantidad" min="0" value="0">
+            <button type="button" class="btn-animales" onclick="abrirModal({{ $tecnica->id }})">🐾 Asignar animales</button>
+          </div>
+
+          <div id="contenedor-animales-{{ $tecnica->id }}"></div>
         </div>
-        <a href="{{ route('dashboard') }}">
-            <button class="btn-back">⬅ Volver al Dashboard</button>
-        </a>
-    </header>
+      @endforeach
+    @endforeach
 
-    <main>
-        <div class="card">
-            <h2>📋 Remisión #{{ $remision->id }}</h2>
+    <button type="submit" class="btn-submit">💾 Guardar Recepción</button>
+    @if ($errors->any())
+  <div style="background:#ffe0e0;color:#b00;padding:10px;border-radius:6px;margin-bottom:15px;">
+      <ul>
+          @foreach ($errors->all() as $error)
+              <li>{{ $error }}</li>
+          @endforeach
+      </ul>
+  </div>
+@endif
 
-            <form method="POST" action="{{ route('remisiones.recibida') }}">
-                @csrf
-                <input type="hidden" name="muestra_enviada_id" value="{{ $remision->id }}">
+  </form>
+</main>
 
-                <!-- Selección de Técnicas -->
-                <h3>🧪 Seleccionar Técnicas</h3>
-                <div class="checkbox-list">
-                    @foreach ($tecnicas as $tecnica)
-                        <div class="checkbox-item">
-                            <label>
-                                <input type="checkbox" name="tecnicas[{{ $tecnica->id }}][id]" value="{{ $tecnica->id }}">
-                                {{ $tecnica->nombre }}
-                            </label>
-                            <input type="number" name="tecnicas[{{ $tecnica->id }}][cantidad]" placeholder="Cantidad" min="0">
-                        </div>
-                    @endforeach
-                </div>
+<!-- MODAL DE ASIGNACIÓN -->
+<div id="modal-animales" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="cerrarModal()">✖</span>
+    <h3>Seleccionar animales</h3>
+    <label><input type="checkbox" id="select-todos" onchange="toggleTodos()"> Seleccionar todos</label>
+    <hr>
+    <div id="lista-animales">
+      @foreach ($remision->persona->animales as $animal)
+        <label>
+          <input type="checkbox" class="chk-animal" value="{{ $animal->id }}">
+          🐾 {{ $animal->nombre }} ({{ $animal->especie->nombre ?? '—' }})
+        </label>
+      @endforeach
+    </div>
+    <button type="button" class="btn-animales" onclick="guardarAnimales()">✔ Asignar</button>
+  </div>
+</div>
 
-                <!-- Selección de Animales -->
-                <h3>🐾 Animales Remitidos</h3>
-                @if ($remision->persona && $remision->persona->animales->isNotEmpty())
-                    <div class="checkbox-list">
-                        @foreach ($remision->persona->animales as $animal)
-                            <label class="checkbox-item">
-                                <span>
-                                    <input type="checkbox" name="animales[]" value="{{ $animal->id }}">
-                                    {{ $animal->nombre }} ({{ $animal->especie->nombre ?? '—' }}, {{ $animal->edad }} años)
-                                </span>
-                            </label>
-                        @endforeach
-                    </div>
-                @else
-                    <p class="empty">⚠️ Este cliente no tiene animales registrados.</p>
-                @endif
+<script>
+  let tecnicaActual = null;
 
-                <button type="submit" class="btn">💾 Guardar Recepción</button>
-            </form>
-        </div>
-    </main>
+  function abrirModal(tecnicaId) {
+    tecnicaActual = tecnicaId;
+    document.getElementById('modal-animales').style.display = 'flex';
+  }
+
+  function cerrarModal() {
+    document.getElementById('modal-animales').style.display = 'none';
+  }
+
+  function toggleTodos() {
+    const checked = document.getElementById('select-todos').checked;
+    document.querySelectorAll('.chk-animal').forEach(c => c.checked = checked);
+  }
+
+  function guardarAnimales() {
+    if (!tecnicaActual) return;
+
+    const seleccionados = Array.from(document.querySelectorAll('.chk-animal:checked')).map(c => c.value);
+    const contenedor = document.getElementById(`contenedor-animales-${tecnicaActual}`);
+    const cantidadInput = document.querySelector(`input[name='tecnicas[${tecnicaActual}][cantidad]']`);
+    const checkboxPrincipal = document.querySelector(`input[name='tecnicas[${tecnicaActual}][id]']`);
+
+    contenedor.innerHTML = '';
+
+    seleccionados.forEach(id => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = `tecnicas[${tecnicaActual}][animales][]`;
+      input.value = id;
+      contenedor.appendChild(input);
+    });
+
+    cantidadInput.value = seleccionados.length;
+
+    if (seleccionados.length > 0) {
+      checkboxPrincipal.checked = true;
+    } else {
+      checkboxPrincipal.checked = false;
+      cantidadInput.value = 0;
+    }
+
+    cerrarModal();
+  }
+
+  // Cerrar modal al hacer clic fuera
+  window.onclick = function(e) {
+    const modal = document.getElementById('modal-animales');
+    if (e.target === modal) cerrarModal();
+  };
+</script>
 
 </body>
 </html>

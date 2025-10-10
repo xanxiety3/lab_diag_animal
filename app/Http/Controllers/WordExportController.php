@@ -17,12 +17,13 @@ class WordExportController extends Controller
     public function exportarRemision($id)
     {
         $remision = RemisionMuestraEnvio::with([
-            'persona',
-            'persona.direcciones',
-            'tiposMuestras',
+            'persona.direcciones.municipio.departamento',
+            'persona.direcciones.tipos_ubicacion',
             'remision_muestra_recibe.responsable',
-            'remision_muestra_recibe.tecnicas' // 🔹 importante para traer las técnicas
+            'remision_muestra_recibe.tecnicas',
+            'tiposMuestras'
         ])->findOrFail($id);
+
 
         $cliente = $remision->persona;
         $direccion = $cliente->direcciones->first();
@@ -97,6 +98,71 @@ class WordExportController extends Controller
             $path = "$outputDir/$fileName";
             $template->saveAs($path);
         }
+      
+      
+
+        // ✅ Datos generales del cliente
+        $template->setValue('nombre_cliente', trim(($cliente->nombres ?? '') . ' ' . ($cliente->apellidos ?? '')));
+        $template->setValue('telefono', $cliente->telefono ?? '');
+        $template->setValue('correo', $cliente->correo ?? '');
+       $template->setValue('departamento', $direccion?->municipio?->departamento?->nombre ?? '');
+
+        $template->setValue('municipio', $direccion?->municipio?->nombre ?? '');
+        $template->setValue('tipo_ubicacion', $direccion?->tipos_ubicacion?->nombre ?? '');
+    
+
+
+        // ✅ Empresa
+        $template->setValue('empresa_si', $cliente->empresa ? 'X' : '');
+        $template->setValue('empresa_no', $cliente->empresa ? '' : 'X');
+        $template->setValue('nombre_empresa', $cliente->nombre_empresa ?? '');
+
+        // ✅ Cliente SENA
+        $template->setValue('sena_si', $cliente->rol_sena ? 'X' : '');
+        $template->setValue('sena_no', $cliente->rol_sena ? '' : 'X');
+        $template->setValue('rol_sena', $cliente->rol_sena ?? '');
+
+
+        // Datos del remitente
+        $template->setValue('responsable', $responsable->name ?? '');
+        $template->setValue('fecha_toma', $remision->fecha?->format('d/m/Y') ?? '');
+        $template->setValue('hora_toma', $remision->fecha?->format('H:i') ?? '');
+        $template->setValue('tel_responsable', $responsable->telefono ?? '');
+        $template->setValue('correo', $responsable->email ?? '');
+
+        // -----------------------------
+        // 🔹 Detalles de las Muestras a Procesar
+        // -----------------------------
+        // $detalles = $recibe?->detalles_muestras ?? collect();
+
+        // if ($detalles->isNotEmpty()) {
+        //     $template->cloneRow('prueba', $detalles->count());
+
+        //     foreach ($detalles as $i => $detalle) {
+        //         $n = $i + 1;
+
+        //         // Formatear especie y sexo para que no aparezca JSON
+        //         $especie = $detalle->animal?->especie?->nombre ?? '';
+        //         $sexo = $detalle->animal?->sexo?->descripcion ?? '';
+
+        //         $template->setValue("prueba#{$n}", $detalle->prueba ?? '—');
+        //         $template->setValue("id_item#{$n}", $detalle->id ?? '');
+        //         $template->setValue("edad#{$n}", $detalle->edad ?? '');
+        //         $template->setValue("especie#{$n}", $especie);
+        //         $template->setValue("sexo#{$n}", $sexo);
+        //         $template->setValue("observaciones#{$n}", $detalle->observaciones ?? '');
+        //     }
+        // } else {
+        //     // Si no hay detalles
+        //     $template->setValue('prueba', '—');
+        //     $template->setValue('id_item', '');
+        //     $template->setValue('edad', '');
+        //     $template->setValue('especie', '');
+        //     $template->setValue('sexo', '');
+        //     $template->setValue('observaciones', '');
+        // }
+
+
 
         // 📦 Generar ZIP
         $zipPath = storage_path("app/public/remision_{$remision->id}.zip");

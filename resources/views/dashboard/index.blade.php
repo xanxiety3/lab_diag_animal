@@ -21,7 +21,7 @@
         </div>
         <nav>
             <a href="{{ route('registro.wizard') }}">➕ Nueva Remisión</a>
-            <a href="{{ route('resultados.elegir_tecnica', ['remisionEnvioId' => 0]) }}">📊 Resultados</a>
+            <a href="{{ route('resultados.vista') }}">📊 Resultados</a>
             <a href="{{ route('register') }}">👤 Registrar Usuario</a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -41,15 +41,19 @@
                 <label for="filtro-resultado">Resultado:</label>
                 <select name="filtro_resultado" id="filtro-resultado">
                     <option value="todos" {{ request('filtro_resultado') == 'todos' ? 'selected' : '' }}>Todos</option>
-                    <option value="con" {{ request('filtro_resultado') == 'con' ? 'selected' : '' }}>Con resultado</option>
-                    <option value="sin" {{ request('filtro_resultado') == 'sin' ? 'selected' : '' }}>Sin resultado</option>
+                    <option value="con" {{ request('filtro_resultado') == 'con' ? 'selected' : '' }}>Con resultado
+                    </option>
+                    <option value="sin" {{ request('filtro_resultado') == 'sin' ? 'selected' : '' }}>Sin resultado
+                    </option>
                 </select>
 
                 <label for="filtro-estado">Estado:</label>
                 <select name="filtro_estado" id="filtro-estado">
                     <option value="todos" {{ request('filtro_estado') == 'todos' ? 'selected' : '' }}>Todos</option>
-                    <option value="aceptadas" {{ request('filtro_estado') == 'aceptadas' ? 'selected' : '' }}>Aceptadas</option>
-                    <option value="rechazadas" {{ request('filtro_estado') == 'rechazadas' ? 'selected' : '' }}>Rechazadas</option>
+                    <option value="aceptadas" {{ request('filtro_estado') == 'aceptadas' ? 'selected' : '' }}>Aceptadas
+                    </option>
+                    <option value="rechazadas" {{ request('filtro_estado') == 'rechazadas' ? 'selected' : '' }}>
+                        Rechazadas</option>
                 </select>
 
                 <button type="submit">Aplicar</button>
@@ -89,8 +93,19 @@
                                 {{ $remision->rechazada ? '❌ Rechazada' : '✔️ Aceptada' }}
                             </td>
                             <td>
-                                <a href="{{ route('show.remision', $remision->muestra_enviada_id) }}" class="btn-ver">Ver</a>
+                                <div class="acciones">
+                                    <!-- Botón Ver -->
+                                    <a href="{{ route('show.remision', $remision->muestra_enviada_id) }}"
+                                        class="btn-ver">Ver</a>
+
+                                    <!-- Botón Descargar Word -->
+                                    <a href="{{ route('export.remision.word', $remision->muestra_enviada_id) }}"
+                                        class="btn-descargar" title="Descargar Word">
+                                        Descargar📄
+                                    </a>
+                                </div>
                             </td>
+
                         </tr>
                     @endforeach
                 </tbody>

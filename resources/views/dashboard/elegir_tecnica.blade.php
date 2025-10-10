@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +19,8 @@
             margin: 0 auto;
         }
 
-        h1, h2 {
+        h1,
+        h2 {
             margin-bottom: 20px;
         }
 
@@ -34,6 +36,7 @@
             margin-bottom: 25px;
             transition: all 0.3s;
         }
+
         .btn-dashboard:hover {
             background: #2ecc71;
             transform: translateY(-2px);
@@ -44,14 +47,14 @@
             background: #ffffffcc;
             padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
             margin-bottom: 25px;
             transition: all 0.3s;
         }
 
         .card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
 
         .card h3 {
@@ -64,12 +67,13 @@
             border-collapse: collapse;
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             background: #ffffffcc;
             margin-bottom: 25px;
         }
 
-        th, td {
+        th,
+        td {
             padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid #e0e0e0;
@@ -121,6 +125,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <a href="{{ route('dashboard') }}" class="btn-dashboard">⬅️ Volver al Dashboard</a>
@@ -151,20 +156,24 @@
                 </tbody>
             </table>
         </div>
-
         <!-- Técnicas -->
         <div class="card">
             <h3>⚗️ Técnicas asociadas a la Remisión #{{ $remision->id }}</h3>
-            @if($tecnicas->isNotEmpty())
+
+            @if ($tecnicas->isNotEmpty())
                 <ul>
-                    @foreach($tecnicas as $tecnica)
+                    @foreach ($tecnicas as $tecnica)
                         <li>
                             {{ $tecnica->nombre }}
+
                             @if (!($tecnica->tiene_resultado ?? false))
-                                <a href="{{ route('resultados.asignar_animales', [
-                                    'remision' => $remision->id,
-                                    'tecnica'  => $tecnica->id
-                                ]) }}" class="btn">➕ Registrar resultado</a>
+                                <a href="{{ route('resultados.create', [
+                                    'remisionRecibe' => $remisionRecibe->id,
+                                    'tecnica' => $tecnica->id,
+                                ]) }}"
+                                    class="btn btn-success">
+                                    🧾 Ingresar resultados
+                                </a>
                             @else
                                 <span class="chip ok">✅ Resultado registrado</span>
                             @endif
@@ -175,6 +184,8 @@
                 <p>No hay técnicas asociadas a esta recepción.</p>
             @endif
         </div>
+
     </div>
 </body>
+
 </html>

@@ -49,6 +49,14 @@ class RemisionMuestraRecibe extends Model
 
 	];
 
+
+	// App\Models\RemisionMuestraRecibe.php
+
+	public function detalles_muestras()
+	{
+		return $this->hasMany(AnimalTecnicaResultado::class, 'remision_muestra_recibe_id', 'id');
+	}
+
 	public function resultados()
 	{
 		return $this->hasMany(Resultado::class, 'remision_muestra_recibe_id');
@@ -69,7 +77,7 @@ class RemisionMuestraRecibe extends Model
 			'muestra_recibe_tecnica',      // tabla pivot
 			'muestra_recibe_id',           // FK en pivot hacia este modelo
 			'tecnica_id'                   // FK en pivot hacia tecnicas_muestra
-		)->withPivot('cantidad'); 
+		)->withPivot('cantidad');
 	}
 
 	public function animales()

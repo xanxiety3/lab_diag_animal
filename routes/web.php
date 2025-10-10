@@ -20,7 +20,7 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login'); /
 Route::post('/login', [AuthController::class, 'login']);                      // Procesar login
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register'); // Formulario de registro
 Route::post('/register', [AuthController::class, 'register']);                         // Procesar registro
-Route::get('/export-word/{id}', [WordExportController::class, 'exportarRemision']); // Exportar remisión a Word
+
 
 
 // -------------------------------------------------------------------------
@@ -51,7 +51,12 @@ Route::middleware(['auth', IsUserAuth::class])->group(function () {
 
         // -------------------------
         // 📌 DASHBOARD Y REGISTRO (wizard en pasos)
+        
         // -------------------------
+
+        Route::get('/export-word/{id}', [WordExportController::class, 'exportarRemision'])->name('export.remision.word'); // Exportar remisión a Word
+
+
         Route::get('/registro', [RegistroController::class, 'showWizard'])->name('registro.wizard'); // Mostrar wizard con pasos dinámicos (?step=)
         Route::get('/inicio', [RegistroController::class, 'index'])->name('dashboard');             // Vista principal del dashboard
 
@@ -70,6 +75,11 @@ Route::middleware(['auth', IsUserAuth::class])->group(function () {
 
 
         // -------------------------
+
+        //dashboard de resultados 
+        Route::get('/dashboard/resultados', [ResultadoController::class, 'dashboardResultados'])
+            ->name('resultados.vista');
+
 
 
 

@@ -52,7 +52,7 @@ class TecnicasMuestra extends Model
 
 	public function muestrasRecibidas()
 	{
-		return $this->belongsToMany(MuestraRecibeTecnica::class, 'muestra_recibe_tecnica');
+		return $this->belongsToMany(MuestraRceibeTecnica::class, 'muestra_recibe_tecnica');
 	}
 
 	public function remisionesRecibidas()
@@ -66,17 +66,16 @@ class TecnicasMuestra extends Model
 	}
 
 
-	public function getFormatoAttribute()
-	{
-		return match (strtolower(trim($this->nombre))) {
-			'flotación', 'sedimentación', 'centrifugación' => 'copro_fresco',
-			'hemograma automático' => 'hemograma',
-			'baermann' => 'bearman',
-			'mc master' => 'mac_master',
-			'frotis directo', 'wright', 'tinción de giemsa', 'kinyoun' => 'copro_fresco', // si quieres incluirlos ahí
-			default => 'generico',
-		};
-	}
+		public function getFormatoAttribute()
+		{
+			return match (strtolower(trim($this->nombre))) {
+				'montaje en fresco', 'sedimentación' => 'copro_fresco',
+				'hemograma completo', 'hematocrito', 'deteccion de hemoparasitos' => 'hemograma',
+				'baermann' => 'bearman',
+				'mc master' => 'mac_master',
+				default => 'no existe',
+			};
+		}	
 
 
 

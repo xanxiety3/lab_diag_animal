@@ -12,4 +12,11 @@ class AnimalTecnicaResultado extends Model
         'tecnica_id',
         'remision_muestra_recibe_id'
     ];
+
+
+public function animal()
+{
+    return $this->belongsTo(Animale::class, 'animal_id', 'id');
+}
+
 }
