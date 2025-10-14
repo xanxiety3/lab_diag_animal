@@ -123,6 +123,16 @@ class RemisionMuestraRecibe extends Model
 		return $query; // 'todos'
 	}
 
+
+	public function criteriosAceptacion()
+	{
+		return $this->hasMany(RemisionRecibeCriterio::class, 'remision_muestra_recibe_id');
+	}
+
+	public function items()
+	{
+		return $this->hasMany(RemisionRecibeItem::class, 'remision_muestra_recibe_id');
+	}
 	public function todasTecnicasConResultado()
 	{
 		foreach ($this->tecnicas as $tecnica) {

@@ -48,10 +48,16 @@ Route::middleware(['auth', IsUserAuth::class])->group(function () {
 
         Route::get('/ver/{id}', [RemisionesController::class, 'show'])->name('show.remision'); // Ver detalle de una remisión específica
 
-
+        // / Ruta para mostrar el formulario de creación de criterios
+        Route::get('/remisiones/criterios/{recibe}/create', [RemisionesController::class, 'formCriterios'])
+            ->name('remisiones.criterios.create');
+          
+        // Ruta para guardar los criterios
+        Route::post('/remisiones/criterios/{recibe}', [RemisionesController::class, 'storeCriteriosAceptacion'])
+            ->name('remisiones.criterios.store');
         // -------------------------
         // 📌 DASHBOARD Y REGISTRO (wizard en pasos)
-        
+
         // -------------------------
 
         Route::get('/export-word/{id}', [WordExportController::class, 'exportarRemision'])->name('export.remision.word'); // Exportar remisión a Word

@@ -103,7 +103,8 @@
 
                             <div class="mb-3" id="campo-sena" style="display: none;">
                                 <label>Rol</label>
-                                <input type="text" name="rol_sena" class="form-control" value="{{ old('rol_sena') }}">
+                                <input type="text" name="rol_sena" class="form-control"
+                                    value="{{ old('rol_sena') }}">
                                 @error('rol_sena')
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
@@ -144,42 +145,42 @@
                                 <div class="animal-item border p-3 mb-3">
                                     <div class="animal-row">
                                         <label>Nombre del Animal</label>
-                                        <input type="text" name="animales[0][nombre]" />
-                                        <select name="animales[0][especie_id]" class="especie-select" required>
+                                        <input type="text" name="animales[0][nombre]" class="form-control" required>
+
+                                        <label>Especie</label>
+                                        <select name="animales[0][especie_id]" class="especie-select form-select"
+                                            required>
                                             <option value="" disabled selected>Seleccione especie</option>
                                             @foreach ($especies as $especie)
                                                 <option value="{{ $especie->id }}">{{ $especie->nombre }}</option>
                                             @endforeach
                                         </select>
 
-                                        <select name="animales[0][raza_id]" class="raza-select" required>
+                                        <label>Raza</label>
+                                        <select name="animales[0][raza_id]" class="raza-select form-select" required>
                                             <option value="" disabled selected>Seleccione raza</option>
                                         </select>
-                                    </div>
 
-
-
-                                    <div class="mb-2">
                                         <label>Sexo</label>
                                         <select name="animales[0][sexo_id]" class="form-select" required>
                                             <option value="" disabled selected>Seleccione sexo</option>
                                             @foreach ($sexos as $sexo)
-                                                <option value="{{ $sexo->id }}"
-                                                    {{ old('animales.0.sexo_id') == $sexo->id ? 'selected' : '' }}>
-                                                    {{ $sexo->descripcion }}
-                                                </option>
+                                                <option value="{{ $sexo->id }}">{{ $sexo->descripcion }}</option>
                                             @endforeach
                                         </select>
-                                    </div>
-                                    <div class="mb-2">
+
                                         <label>Edad</label>
-                                        <input type="number" name="animales[0][edad]" class="form-control" required
-                                            value="{{ old('animales.0.edad') }}">
+                                        <input type="number" name="animales[0][edad]" class="form-control"
+                                            min="0" required>
                                     </div>
 
+                                    {{-- Botón eliminar --}}
+                                    <button type="button" class="btn btn-danger mt-2 eliminar-animal">🗑
+                                        Eliminar</button>
                                 </div>
                             </div>
 
+                          
                             <button type="button" class="btn btn-secondary mb-3" onclick="agregarAnimal()">+ Añadir
                                 otro animal</button>
                             <br>
@@ -237,7 +238,11 @@
                                     @endforeach
                                 </select>
                             </div>
-
+<div class="mb-3">
+                                <label>Nombre Del Predio</label>
+                                <input name="nombre_predio" class="form-control" required
+                                    value="{{ old('nombre_predio') }}">
+                            </div>
                             <div class="mb-3">
                                 <label>Dirección Detallada</label>
                                 <input name="direccion_detallada" class="form-control" required

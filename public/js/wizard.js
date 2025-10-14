@@ -1,3 +1,5 @@
+
+
 let animalCount = 1;
 
 function cargarRazas(especieId, razaSelect) {
@@ -25,7 +27,7 @@ function cargarRazas(especieId, razaSelect) {
 }
 
 function agregarListenersEspecie(especieSelect) {
-    especieSelect.addEventListener('change', function() {
+    especieSelect.addEventListener('change', function () {
         const animalRow = especieSelect.closest('.animal-row');
         const razaSelect = animalRow.querySelector('.raza-select');
         cargarRazas(this.value, razaSelect);
@@ -43,10 +45,13 @@ function agregarAnimal() {
     const original = document.querySelector('.animal-item');
     const nuevo = original.cloneNode(true);
 
+    // Limpiar valores y actualizar nombres
     nuevo.querySelectorAll('select, input').forEach(input => {
         const name = input.getAttribute('name');
-        const newName = name.replace(/\d+/, animalCount);
-        input.setAttribute('name', newName);
+        if (name) {
+            const newName = name.replace(/\d+/, animalCount);
+            input.setAttribute('name', newName);
+        }
         input.value = '';
         if (input.tagName.toLowerCase() === 'select') {
             input.selectedIndex = 0;
@@ -54,17 +59,31 @@ function agregarAnimal() {
     });
 
     wrapper.appendChild(nuevo);
-
     const nuevaEspecie = nuevo.querySelector('.especie-select');
     agregarListenersEspecie(nuevaEspecie);
 
+    agregarBotonEliminar(nuevo);
     animalCount++;
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+function agregarBotonEliminar(animalItem) {
+    const boton = animalItem.querySelector('.eliminar-animal');
+    boton.addEventListener('click', function () {
+        const totalAnimales = document.querySelectorAll('.animal-item').length;
+        if (totalAnimales > 1) {
+            animalItem.remove();
+        } else {
+            alert('Debe haber al menos un animal.');
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.especie-select').forEach(agregarListenersEspecie);
-    window.agregarAnimal = agregarAnimal; // Exponer función global para botón
+    document.querySelectorAll('.animal-item').forEach(agregarBotonEliminar);
+    window.agregarAnimal = agregarAnimal;
 });
+
 
 
 document.addEventListener('DOMContentLoaded', function () {

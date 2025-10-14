@@ -61,16 +61,18 @@ class WordExportController extends Controller
             $template->setValue('departamento', $direccion?->municipio?->departamento?->nombre ?? '');
             $template->setValue('municipio', $direccion?->municipio?->nombre ?? '');
             $template->setValue('tipo_ubicacion', $direccion?->tipos_ubicacion?->nombre ?? '');
+            $template->setValue('predio', $direccion?->nombre_predio ?? '');
 
             // 🏢 Empresa
-            $template->setValue('empresa_si', $cliente->empresa ? 'X' : '');
-            $template->setValue('empresa_no', $cliente->empresa ? '' : 'X');
-            $template->setValue('nombre_empresa', $cliente->nombre_empresa ?? '');
+            $template->setValue('empresa_si', $cliente->es_empresa ? 'X' : '');
+            $template->setValue('empresa_no', $cliente->es_empresa ? '' : 'X');
+            $template->setValue('nombre_empresa', $cliente->es_empresa ? ($cliente->nombre_empresa ?? '') : '');
 
             // 🎓 Cliente SENA
-            $template->setValue('sena_si', $cliente->rol_sena ? 'X' : '');
-            $template->setValue('sena_no', $cliente->rol_sena ? '' : 'X');
-            $template->setValue('rol_sena', $cliente->rol_sena ?? '');
+            $template->setValue('sena_si', $cliente->es_sena ? 'X' : '');
+            $template->setValue('sena_no', $cliente->es_sena ? '' : 'X');
+            $template->setValue('rol_sena', $cliente->es_sena ? ($cliente->rol_sena ?? '') : '');
+
 
             // 🧪 Tipo de muestra
             $template->setValue('tipo_muestra', $tipo->nombre);
@@ -86,29 +88,44 @@ class WordExportController extends Controller
             $template->setValue('email', $responsable->email ?? '');
             $template->setValue('rol', $responsable->rol->nombre ?? '');
 
-            // -----------------------------
-            // 🔹 Técnicas (ensayos)
-            // -----------------------------
+            // ------------------------------------------
+            // 🧪 ENSAYOS (técnicas)
+            // ------------------------------------------
             $tecnicas = $recibe?->tecnicas ?? collect();
 
-            if ($tecnicas->isNotEmpty()) {
-                $template->cloneRow('ensayo', $tecnicas->count());
-                foreach ($tecnicas as $i => $tec) {
-                    $n = $i + 1;
+            // Número total de filas fijas que tiene tu tabla en Word
+            $maxFilas = 10; // ajusta según tu plantilla
+
+            for ($i = 1; $i <= $maxFilas; $i++) {
+                if (isset($tecnicas[$i - 1])) {
+                    $tec = $tecnicas[$i - 1];
                     $valorUnitario = $tec->valor_unitario ?? 0;
                     $cantidad = $tec->pivot->cantidad ?? 0;
                     $valorTotal = $valorUnitario * $cantidad;
 
-                    $template->setValue("ensayo#{$n}", $tec->nombre);
-                    $template->setValue("valor_unitario#{$n}", number_format($valorUnitario, 0, ',', '.'));
-                    $template->setValue("cantidad#{$n}", $cantidad);
-                    $template->setValue("valor_total#{$n}", number_format($valorTotal, 0, ',', '.'));
+                    // 🧾 Cliente
+                    $template->setValue("ensayo{$i}_cliente", $tec->nombre);
+                    $template->setValue("valor{$i}_cliente", number_format($valorUnitario, 0, ',', '.'));
+                    $template->setValue("cantidad{$i}_cliente", $cantidad);
+                    $template->setValue("total{$i}_cliente", number_format($valorTotal, 0, ',', '.'));
+
+                    // 🧾 Laboratorio
+                    $template->setValue("ensayo{$i}_lab", $tec->nombre);
+                    $template->setValue("valor{$i}_lab", number_format($valorUnitario, 0, ',', '.'));
+                    $template->setValue("cantidad{$i}_lab", $cantidad);
+                    $template->setValue("total{$i}_lab", number_format($valorTotal, 0, ',', '.'));
+                } else {
+                    // Rellenamos con guiones para mantener estructura fija
+                    $template->setValue("ensayo{$i}_cliente", '-----------------');
+                    $template->setValue("valor{$i}_cliente", '-----------------');
+                    $template->setValue("cantidad{$i}_cliente", '-----------------');
+                    $template->setValue("total{$i}_cliente", '-----------------');
+
+                    $template->setValue("ensayo{$i}_lab", '-----------------');
+                    $template->setValue("valor{$i}_lab", '-----------------');
+                    $template->setValue("cantidad{$i}_lab", '-----------------');
+                    $template->setValue("total{$i}_lab", '-----------------');
                 }
-            } else {
-                $template->setValue('ensayo', '—');
-                $template->setValue('valor_unitario', '');
-                $template->setValue('cantidad', '');
-                $template->setValue('valor_total', '');
             }
 
 
@@ -158,6 +175,71 @@ class WordExportController extends Controller
                 $template->setValue('especie_raza', '');
                 $template->setValue('sexo', '');
                 $template->setValue('observaciones', '');
+            }
+
+            // ------------------------------------------
+            // 🧾 CRITERIOS DE ACEPTACIÓN O RECHAZO
+            // ------------------------------------------
+            $criterios = $recibe?->criteriosAceptacion ?? collect();
+
+            if ($criterios->isNotEmpty()) {
+                $template->cloneRow('criterio', $criterios->count());
+
+                foreach ($criterios as $i => $c) {
+                    $n = $i + 1;
+
+                    // Convertir 1/0 a texto SI o NO
+                    $valor = '';
+                    if ($c->si) {
+                        $valor = 'SI';
+                    } elseif ($c->no) {
+                        $valor = 'NO';
+                    }
+
+                    $template->setValue("nro_criterio#{$n}", $n);
+                    $template->setValue("criterio#{$n}", $c->criterio->descripcion ?? ''); // Usa la relación con la tabla criterios
+                    $template->setValue("valor_criterio#{$n}", $valor);
+                    $template->setValue("observacion_criterio#{$n}", $c->observaciones ?? '');
+                }
+            } else {
+                // Si no hay criterios, dejar una fila vacía
+                $template->setValue('nro_criterio', '');
+                $template->setValue('criterio', '');
+                $template->setValue('valor_criterio', '');
+                $template->setValue('observacion_criterio', '');
+            }
+
+            // ------------------------------------------
+            // 📦 ÍTEMS DE ENSAYO (tabla dinámica en Word)
+            // ------------------------------------------
+            $items = $recibe?->items ?? collect();
+
+            if ($items->isNotEmpty()) {
+                // Clonamos la fila base del Word según el número de ítems
+                $template->cloneRow('id_item', $items->count());
+
+                foreach ($items as $i => $item) {
+                    $n = $i + 1;
+
+                    $template->setValue("nro#{$n}", $n);
+                    $template->setValue("id_item#{$n}", $item->id_item ?? '');
+                    $template->setValue("tipo_empaque#{$n}", $item->tipo_empaque ?? '');
+                    $template->setValue("cantidad_requerida#{$n}", $item->cantidad_requerida === 'si' ? 'SI' : 'NO');
+                    $template->setValue("temperatura#{$n}", $item->temperatura ?? '');
+                    $template->setValue("observaciones_item#{$n}", $item->observaciones ?? '');
+                    $template->setValue("aceptado#{$n}", $item->aceptado === 'si' ? 'SI' : 'NO');
+                    $template->setValue("codigo_interno#{$n}", $item->codigo_interno ?? '');
+                }
+            } else {
+                // Si no hay ítems, dejar una fila vacía
+                $template->setValue('nro', '');
+                $template->setValue('id_item', '');
+                $template->setValue('tipo_empaque', '');
+                $template->setValue('cantidad_requerida', '');
+                $template->setValue('temperatura', '');
+                $template->setValue('observaciones_item', '');
+                $template->setValue('aceptado', '');
+                $template->setValue('codigo_interno', '');
             }
 
 

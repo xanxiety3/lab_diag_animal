@@ -42,6 +42,7 @@ class Direccione extends Model
 		'municipio_id',
 		'tipo_direccion_id',
 		'tipo_ubicacion_id',
+		'nombre_predio',
 		'direccion_detallada'
 	];
 

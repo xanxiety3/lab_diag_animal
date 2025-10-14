@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CriteriosAceptacion;
 use App\Models\MuestraRecibeTecnica;
 use App\Models\Persona;
 use App\Models\RemisionMuestraEnvio;
 use App\Models\RemisionMuestraRecibe;
+use App\Models\RemisionRecibeCriterio;
+use App\Models\RemisionRecibeItem;
 use App\Models\TecnicasMuestra;
 use App\Models\TiposMuestra;
 use Illuminate\Http\Request;
@@ -121,9 +124,13 @@ class RemisionesController extends Controller
         // Obtener la remisión enviada específica
         $remision = RemisionMuestraEnvio::findOrFail($remisionId);
 
-        // Obtener todas las técnicas disponibles
-        $tecnicas = TecnicasMuestra::with('tipos_muestra')->get();
+        // Extraer los IDs de los tipos de muestra seleccionados en esa remisión
+        $tiposSeleccionados = $remision->tiposMuestras->pluck('id');
 
+        // Obtener solo las técnicas que correspondan a esos tipos de muestra
+        $tecnicas = TecnicasMuestra::with('tipos_muestra')
+            ->whereIn('tipo_muestra_id', $tiposSeleccionados)
+            ->get();
 
         return view('remisiones.remision_recibida', [
             'remision' => $remision,
@@ -131,91 +138,215 @@ class RemisionesController extends Controller
         ]);
     }
 
-public function storeRecibido(Request $request)
-{
-    $request->validate([
-        'muestra_enviada_id' => 'required|exists:remision_muestra_envio,id',
-        'tecnicas' => 'required|array|min:1',
-    ], [
-        'muestra_enviada_id.required' => 'Falta la remisión enviada.',
-        'tecnicas.required' => 'Debe seleccionar al menos una técnica.',
-    ]);
-
-    // ✅ Filtrar solo las técnicas que tengan animales o cantidad válida
-    $tecnicasFiltradas = collect($request->tecnicas)
-        ->filter(function ($t) {
-            // Decodificar animales si vienen en string
-            $animales = $t['animales'] ?? [];
-            if (is_string($animales)) {
-                $animales = json_decode($animales, true) ?? [];
-            }
-
-            return !empty($animales) || (!empty($t['cantidad']) && $t['cantidad'] > 0);
-        })
-        ->all();
-
-    if (empty($tecnicasFiltradas)) {
-        return back()->withErrors([
-            'tecnicas' => 'Debe seleccionar al menos una técnica válida con animales o cantidad.',
-        ]);
-    }
-
-    DB::beginTransaction();
-
-    try {
-        $muestraRecibe = RemisionMuestraRecibe::create([
-            'muestra_enviada_id' => $request->muestra_enviada_id,
-            'responsable_id' => auth()->id(),
-            'fecha' => now(),
+    public function storeRecibido(Request $request)
+    {
+        $request->validate([
+            'muestra_enviada_id' => 'required|exists:remision_muestra_envio,id',
+            'tecnicas' => 'required|array|min:1',
+        ], [
+            'muestra_enviada_id.required' => 'Falta la remisión enviada.',
+            'tecnicas.required' => 'Debe seleccionar al menos una técnica.',
         ]);
 
-        foreach ($tecnicasFiltradas as $tecnicaData) {
-            $tecnicaId = $tecnicaData['id'] ?? null;
-            $cantidad = (int) ($tecnicaData['cantidad'] ?? 1); // ✅ valor por defecto 1
+        // ✅ Filtrar solo las técnicas que tengan animales o cantidad válida
+        $tecnicasFiltradas = collect($request->tecnicas)
+            ->filter(function ($t) {
+                // Decodificar animales si vienen en string
+                $animales = $t['animales'] ?? [];
+                if (is_string($animales)) {
+                    $animales = json_decode($animales, true) ?? [];
+                }
 
-            if (!$tecnicaId) continue;
+                return !empty($animales) || (!empty($t['cantidad']) && $t['cantidad'] > 0);
+            })
+            ->all();
 
-            // ✅ Decodificar animales si vienen en JSON
-            $animales = $tecnicaData['animales'] ?? [];
-            if (is_string($animales)) {
-                $animales = json_decode($animales, true) ?? [];
-            }
+        if (empty($tecnicasFiltradas)) {
+            return back()->withErrors([
+                'tecnicas' => 'Debe seleccionar al menos una técnica válida con animales o cantidad.',
+            ]);
+        }
 
-            // Obtener valor unitario de la técnica
-            $valorUnitario = TecnicasMuestra::find($tecnicaId)?->valor_unitario ?? 0;
+        DB::beginTransaction();
 
-            // ✅ Registrar técnica recibida (pivot con cantidad y valor)
-            $muestraRecibe->tecnicas()->attach($tecnicaId, [
-                'cantidad' => $cantidad,
-                'created_at' => now(),
-                'updated_at' => now(),
+        try {
+            $muestraRecibe = RemisionMuestraRecibe::create([
+                'muestra_enviada_id' => $request->muestra_enviada_id,
+                'responsable_id' => auth()->id(),
+                'fecha' => now(),
             ]);
 
-            // ✅ Insertar animales asociados (si existen)
-            foreach ($animales as $animalId) {
-                DB::table('animal_tecnica_resultado')->insert([
-                    'remision_muestra_recibe_id' => $muestraRecibe->id,
-                    'tecnica_id' => $tecnicaId,
-                    'animal_id' => $animalId,
+            foreach ($tecnicasFiltradas as $tecnicaData) {
+                $tecnicaId = $tecnicaData['id'] ?? null;
+                $cantidad = (int) ($tecnicaData['cantidad'] ?? 1); // ✅ valor por defecto 1
+
+                if (!$tecnicaId) continue;
+
+                // ✅ Decodificar animales si vienen en JSON
+                $animales = $tecnicaData['animales'] ?? [];
+                if (is_string($animales)) {
+                    $animales = json_decode($animales, true) ?? [];
+                }
+
+                // Obtener valor unitario de la técnica
+                $valorUnitario = TecnicasMuestra::find($tecnicaId)?->valor_unitario ?? 0;
+
+                // ✅ Registrar técnica recibida (pivot con cantidad y valor)
+                $muestraRecibe->tecnicas()->attach($tecnicaId, [
+                    'cantidad' => $cantidad,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
+
+                // ✅ Insertar animales asociados (si existen)
+                foreach ($animales as $animalId) {
+                    DB::table('animal_tecnica_resultado')->insert([
+                        'remision_muestra_recibe_id' => $muestraRecibe->id,
+                        'tecnica_id' => $tecnicaId,
+                        'animal_id' => $animalId,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            // Redirigir a la vista de criterios
+            return redirect()->route('remisiones.criterios.create', $muestraRecibe->id)
+                ->with('success', 'Recepción de muestra registrada correctamente. Ahora complete los criterios.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            // ✅ Registrar error para depuración si estás en modo debug
+            report($e);
+
+            return back()->withErrors([
+                'error' => 'Ocurrió un error al guardar: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+
+    // Mostrar formulario para criterios de una remisión recibida
+    public function formCriterios($recibeId)
+    {
+        $recibe = RemisionMuestraRecibe::findOrFail($recibeId);
+        $criterios = CriteriosAceptacion::all(); // todos los criterios predefinidos
+
+        return view('remisiones.criterios_aceptacion', compact('recibe', 'criterios'));
+    }
+
+    public function storeCriteriosAceptacion(Request $request, $recibe)
+    {
+        $recibe = RemisionMuestraRecibe::findOrFail($recibe);
+
+        $errores = [];
+
+        /* ---------------------------------------------------------
+     * 🔍 VALIDACIÓN DE CRITERIOS
+     * --------------------------------------------------------- */
+        if (!$request->filled('criterios') || !is_array($request->criterios) || count($request->criterios) === 0) {
+            $errores['criterios'] = 'Debe diligenciar al menos un criterio.';
+        } else {
+            foreach ($request->criterios as $criterioId => $data) {
+                $si = isset($data['si']) ? (bool)$data['si'] : false;
+                $no = isset($data['no']) ? (bool)$data['no'] : false;
+                $temperatura = $data['temperatura'] ?? null;
+
+                if (!$si && !$no) {
+                    $errores["criterios.$criterioId"] = "Debe marcar SI o NO en el criterio #$criterioId.";
+                }
+
+                if ($si && $no) {
+                    $errores["criterios.$criterioId"] = "No puede marcar SI y NO al mismo tiempo en el criterio #$criterioId.";
+                }
+
+                if ($temperatura !== null && $temperatura !== '' && !is_numeric($temperatura)) {
+                    $errores["criterios.$criterioId.temperatura"] = "La temperatura del criterio #$criterioId debe ser numérica.";
+                }
             }
         }
 
-        DB::commit();
+        /* ---------------------------------------------------------
+     * 📦 VALIDACIÓN DE ÍTEMS
+     * --------------------------------------------------------- */
+        if (!$request->filled('items') || !is_array($request->items) || count($request->items) === 0) {
+            $errores['items'] = 'Debe registrar al menos un ítem.';
+        } else {
+            foreach ($request->items as $index => $itemData) {
+                $numero = $index + 1;
 
-        return redirect()->route('dashboard')->with('success', 'Recepción de muestra registrada correctamente.');
-    } catch (\Throwable $e) {
-        DB::rollBack();
+                if (empty($itemData['id_item'])) {
+                    $errores["items.$index.id_item"] = "El campo ID Ítem en la fila #$numero es obligatorio.";
+                }
 
-        // ✅ Registrar error para depuración si estás en modo debug
-        report($e);
+                if (empty($itemData['tipo_empaque'])) {
+                    $errores["items.$index.tipo_empaque"] = "Debe ingresar el Tipo de Empaque en la fila #$numero.";
+                }
 
-        return back()->withErrors([
-            'error' => 'Ocurrió un error al guardar: ' . $e->getMessage(),
-        ]);
+                if (!empty($itemData['temperatura']) && !is_numeric($itemData['temperatura'])) {
+                    $errores["items.$index.temperatura"] = "La temperatura en la fila #$numero debe ser un valor numérico.";
+                }
+
+                $si = $itemData['cantidad_requerida'] ?? null;
+                $aceptado = $itemData['aceptado'] ?? null;
+
+                if ($si !== 'si' && $si !== 'no') {
+                    $errores["items.$index.cantidad_requerida"] = "Debe indicar SI o NO en 'Cantidad Requerida' de la fila #$numero.";
+                }
+
+                if ($aceptado !== 'si' && $aceptado !== 'no') {
+                    $errores["items.$index.aceptado"] = "Debe indicar SI o NO en 'Ítem Aceptado' de la fila #$numero.";
+                }
+            }
+        }
+
+        /* ---------------------------------------------------------
+     * ❌ SI HAY ERRORES, RETORNAR A LA VISTA
+     * --------------------------------------------------------- */
+        if (!empty($errores)) {
+            return back()->withErrors($errores)->withInput();
+        }
+
+        /* ---------------------------------------------------------
+     * ✅ GUARDAR CRITERIOS
+     * --------------------------------------------------------- */
+        foreach ($request->criterios as $criterioId => $data) {
+            RemisionRecibeCriterio::updateOrCreate(
+                [
+                    'remision_muestra_recibe_id' => $recibe->id,
+                    'criterio_id' => $criterioId,
+                ],
+                [
+                    'si' => isset($data['si']),
+                    'no' => isset($data['no']),
+                    'temperatura' => $data['temperatura'] ?? null,
+                    'observaciones' => $data['observaciones'] ?? null,
+                ]
+            );
+        }
+
+        /* ---------------------------------------------------------
+     * ✅ GUARDAR ÍTEMS
+     * --------------------------------------------------------- */
+        foreach ($request->items as $itemData) {
+            RemisionRecibeItem::updateOrCreate(
+                [
+                    'remision_muestra_recibe_id' => $recibe->id,
+                    'id_item' => $itemData['id_item'],
+                ],
+                [
+                    'tipo_empaque' => $itemData['tipo_empaque'],
+                    'cantidad_requerida' => $itemData['cantidad_requerida'],
+                    'temperatura' => $itemData['temperatura'] ?? null,
+                    'observaciones' => $itemData['observaciones'] ?? null,
+                    'aceptado' => $itemData['aceptado'],
+                    'codigo_interno' => $itemData['codigo_interno'] ?? null,
+                ]
+            );
+        }
+
+        return redirect()->route('dashboard')->with('success', 'Criterios e ítems guardados correctamente.');
     }
-}
-
 }
