@@ -23,6 +23,24 @@ Laravel is accessible, powerful, and provides tools required for large, robust a
 
 ## Learning Laravel
 
+@echo off
+echo ===========================================
+echo    Iniciando el Sistema de Diagnóstico Animal
+echo ===========================================
+echo.
+echo Iniciando Laragon...
+start "" "C:\laragon\laragon.exe"
+
+echo Esperando a que los servicios se inicien...
+timeout /t 6 >nul
+
+echo Abriendo el sistema en el navegador...
+start "" "http://lab_diag_animal.test"
+
+echo Todo listo. Puede cerrar esta ventana si lo desea.
+exit
+
+
 Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
 You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
