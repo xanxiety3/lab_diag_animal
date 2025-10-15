@@ -123,7 +123,7 @@
             <h1>📋 Registrar Resultado Copro Fresco</h1>
             <h2>Técnica "{{ $tecnica->nombre }}" - Remisión #{{ $remisionRecibeId }}</h2>
         </div>
-        <a href="/dashboard" class="back-btn">⬅ Volver al Dashboard</a>
+        <a href="{{ route('dashboard') }}" class="back-btn">⬅ Volver al Dashboard</a>
     </header>
 
     @if($animales->isNotEmpty())

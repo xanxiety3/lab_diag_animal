@@ -121,7 +121,7 @@
   <!-- Header con volver -->
   <header>
     <h1>Resultado Hemograma</h1>
-    <button class="btn-dashboard" onclick="window.location.href='/dashboard'">⬅ Volver al Dashboard</button>
+    <button class="btn-dashboard" onclick="window.location.href='{{ route('dashboard') }}'">⬅ Volver al Dashboard</button>
   </header>
 
   <!-- Contenido -->

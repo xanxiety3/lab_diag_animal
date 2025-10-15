@@ -69,10 +69,10 @@ class TecnicasMuestra extends Model
 		public function getFormatoAttribute()
 		{
 			return match (strtolower(trim($this->nombre))) {
-				'montaje en fresco', 'sedimentación' => 'copro_fresco',
-				'hemograma completo', 'hematocrito', 'deteccion de hemoparasitos' => 'hemograma',
-				'baermann' => 'bearman',
-				'mc master' => 'mac_master',
+				'coproparasitario sedimentacion fecal' , 'coproparasitario montaje en fresco' => 'copro_fresco',
+				'determinación de hemoparasitos', 'hemograma (citometría de flujo)', 'determinación de hematocrito' => 'hemograma',
+				'coproparasitario baerman   ' => 'bearman',
+				'coproparasitario mc master' => 'mac_master',
 				default => 'no existe',
 			};
 		}	

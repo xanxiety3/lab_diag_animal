@@ -85,6 +85,11 @@
     </style>
 </head>
 <body>
+      <header>
+
+    <button class="btn-dashboard" onclick="window.location.href='{{ route('dashboard') }}'">⬅ Volver al Dashboard</button>
+  </header>
+
     <h2>Registrar Resultado Bearman - Remisión #{{ $remisionRecibeId }}</h2>
 
     <form action="{{ url('/resultados/guardar-multiple/' . $remisionRecibeId . '/' . $tecnica->id) }}" method="POST">
