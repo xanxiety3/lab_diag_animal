@@ -6,6 +6,9 @@ use App\Http\Controllers\RegistroController;
 use App\Http\Controllers\RemisionesController;
 use App\Http\Controllers\ResultadoController;
 use App\Http\Controllers\WordExportController;
+use App\Http\Controllers\RegistroTemperaturaController;
+use App\Http\Controllers\GraficasController;
+use App\Http\Controllers\ParametrizacionController;
 use App\Http\Middleware\IsUserAuth;
 
 // -------------------------------------------------------------------------
@@ -29,6 +32,14 @@ Route::post('/register', [AuthController::class, 'register']);                  
 Route::middleware(['auth', IsUserAuth::class])->group(function () {
     // Cerrar sesión
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::resource('parametros', ParametrizacionController::class)->except(['show']);
+
+
+    Route::post('/registro', [RegistroTemperaturaController::class, 'storeAmbos'])->name('registros.storeAmbos');
+
+    Route::get('/dashboard', [RegistroTemperaturaController::class, 'index'])->name('dashboard.monitoreo');
+    Route::get('/graficas', [GraficasController::class, 'graficas'])
+        ->name('graficas');
 
     /*
     |--------------------------------------------------------------------------

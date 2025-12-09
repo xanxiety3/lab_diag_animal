@@ -23,6 +23,7 @@
             <a href="{{ route('registro.wizard') }}">➕ Nueva Remisión</a>
             <a href="{{ route('resultados.vista') }}">📊 Resultados</a>
             <a href="{{ route('register') }}">👤 Registrar Usuario</a>
+            <a href="{{ route('dashboard.monitoreo') }}">📊 Monitoreo de temperatura y humedad</a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="logout-btn">🚪 Cerrar Sesión</button>
